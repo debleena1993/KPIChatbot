@@ -1,0 +1,813 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Sector AI-Powered KPI Chatbot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'bank': '#2E7D32',
+                        'finance': '#7B1FA2', 
+                        'ithr': '#F57C00',
+                        'primary': '#1976D2',
+                    },
+                    boxShadow: {
+                        'material': '0 2px 4px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.1)',
+                        'material-lg': '0 4px 8px rgba(0,0,0,0.12), 0 16px 32px rgba(0,0,0,0.12)',
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="font-inter bg-gray-50 min-h-screen">
+
+    <!-- @COMPONENT: LoginPage -->
+    <div id="loginPage" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-material-lg max-w-md w-full p-8">
+            <!-- Logo Section -->
+            <div class="text-center mb-8">
+                <div class="bg-primary text-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-chart-line text-2xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900">KPI Analytics Hub</h1>
+                <p class="text-gray-600 mt-2">Multi-Sector AI-Powered Dashboard</p>
+            </div>
+
+            <!-- Sector Selection -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-3">Select Your Sector</label>
+                <div class="space-y-3">
+                    <!-- @STATE: selectedSector:string = '' -->
+                    <button data-sector="bank" data-event="click:selectSector" class="sector-btn w-full p-4 rounded-xl border-2 border-gray-200 hover:border-bank hover:bg-green-50 transition-all duration-200 text-left group">
+                        <div class="flex items-center">
+                            <div class="bg-bank text-white w-10 h-10 rounded-lg flex items-center justify-center mr-3 group-hover:scale-105 transition-transform">
+                                <i class="fas fa-university text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-gray-900">Banking</div>
+                                <div class="text-sm text-gray-600">Financial Institution Dashboard</div>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <button data-sector="finance" data-event="click:selectSector" class="sector-btn w-full p-4 rounded-xl border-2 border-gray-200 hover:border-finance hover:bg-purple-50 transition-all duration-200 text-left group">
+                        <div class="flex items-center">
+                            <div class="bg-finance text-white w-10 h-10 rounded-lg flex items-center justify-center mr-3 group-hover:scale-105 transition-transform">
+                                <i class="fas fa-chart-pie text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-gray-900">Finance</div>
+                                <div class="text-sm text-gray-600">Financial Services Analytics</div>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <button data-sector="ithr" data-event="click:selectSector" class="sector-btn w-full p-4 rounded-xl border-2 border-gray-200 hover:border-ithr hover:bg-orange-50 transition-all duration-200 text-left group">
+                        <div class="flex items-center">
+                            <div class="bg-ithr text-white w-10 h-10 rounded-lg flex items-center justify-center mr-3 group-hover:scale-105 transition-transform">
+                                <i class="fas fa-users text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="font-semibold text-gray-900">IT HR Portal</div>
+                                <div class="text-sm text-gray-600">Human Resources Management</div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Login Form -->
+            <form class="space-y-4">
+                <div class="relative">
+                    <input type="text" id="username" data-bind="credentials.username" class="peer w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 placeholder-transparent" placeholder="Username" />
+                    <label for="username" class="absolute left-4 -top-2 bg-white px-1 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-4 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-primary">Username</label>
+                </div>
+                
+                <div class="relative">
+                    <input type="password" id="password" data-bind="credentials.password" class="peer w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 placeholder-transparent" placeholder="Password" />
+                    <label for="password" class="absolute left-4 -top-2 bg-white px-1 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-4 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-primary">Password</label>
+                    <button type="button" class="absolute right-4 top-4 text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+
+                <button type="submit" data-event="click:handleLogin" data-implementation="Should validate credentials using bcrypt and generate JWT token" class="w-full bg-primary text-white p-4 rounded-xl hover:bg-blue-700 transition-colors duration-200 font-semibold shadow-material">
+                    <i class="fas fa-sign-in-alt mr-2"></i>
+                    Sign In
+                </button>
+            </form>
+
+            <!-- Demo Credentials -->
+            <div class="mt-6 p-4 bg-gray-50 rounded-xl">
+                <div class="text-xs font-medium text-gray-700 mb-2">Demo Credentials:</div>
+                <div class="text-xs text-gray-600 space-y-1">
+                    <div>Bank: admin@bank / bank123</div>
+                    <div>Finance: admin@finance / finance123</div>
+                    <div>IT HR: admin@ithr / ithr123</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: LoginPage -->
+
+    <!-- @COMPONENT: Dashboard -->
+    <div id="dashboard" class="hidden min-h-screen bg-gray-50">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between max-w-7xl mx-auto">
+                <div class="flex items-center">
+                    <div class="bg-primary text-white w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-chart-line text-sm"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">KPI Analytics Hub</h1>
+                        <!-- @STATE: currentSector:string, user:object -->
+                        <p class="text-sm text-gray-600">
+                            <span data-bind="user.sector" class="font-medium text-bank">Banking Sector</span> • 
+                            <span data-bind="user.email">admin@bank</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <!-- Connection Status -->
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                        <span class="text-sm text-gray-600">Database: Not Connected</span>
+                    </div>
+                    
+                    <button data-event="click:handleLogout" class="text-gray-500 hover:text-gray-700 transition-colors">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto p-6">
+            <!-- Welcome Section -->
+            <div class="bg-white rounded-2xl shadow-material p-6 mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Welcome to your Dashboard</h2>
+                <p class="text-gray-600 mb-6">Connect to your database to start analyzing KPIs with our AI-powered chatbot.</p>
+                
+                <!-- Database Connection Card -->
+                <div class="bg-gradient-to-r from-primary to-blue-600 text-white rounded-xl p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold mb-1">Database Connection</h3>
+                            <p class="text-blue-100">Connect to your database to enable KPI analysis</p>
+                        </div>
+                        <button data-event="click:openDatabaseModal" class="bg-white text-primary px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors shadow-material">
+                            <i class="fas fa-database mr-2"></i>
+                            Connect Database
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="bg-white rounded-2xl shadow-material p-6">
+                    <div class="bg-green-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-shield-alt text-green-600 text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Secure Access</h3>
+                    <p class="text-gray-600 text-sm">JWT-based authentication with bcrypt password hashing for enterprise security.</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-material p-6">
+                    <div class="bg-purple-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-robot text-purple-600 text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">AI-Powered Queries</h3>
+                    <p class="text-gray-600 text-sm">Natural language KPI queries powered by Google Gemini with schema awareness.</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-material p-6">
+                    <div class="bg-orange-100 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-bar text-orange-600 text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-gray-900 mb-2">Visual Analytics</h3>
+                    <p class="text-gray-600 text-sm">Interactive charts and tables with customizable views for comprehensive data analysis.</p>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-2xl shadow-material p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-sign-in-alt text-blue-600 text-xs"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-900">User Login</div>
+                                <div class="text-sm text-gray-600">Banking sector access granted</div>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-500">Just now</div>
+                    </div>
+                    
+                    <div class="text-center text-gray-500 text-sm py-8">
+                        No database connections yet. Connect to start tracking activity.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- @END_COMPONENT: Dashboard -->
+
+    <!-- @COMPONENT: DatabaseConnectionModal -->
+    <div id="databaseModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-material-lg max-w-md w-full p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">Database Connection</h3>
+                <button data-event="click:closeDatabaseModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="relative">
+                        <input type="text" id="db-host" data-bind="dbConnection.host" class="peer w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder-transparent" placeholder="Host" />
+                        <label for="db-host" class="absolute left-3 -top-2 bg-white px-1 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-primary">Host</label>
+                    </div>
+                    
+                    <div class="relative">
+                        <input type="text" id="db-port" data-bind="dbConnection.port" class="peer w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder-transparent" placeholder="Port" />
+                        <label for="db-port" class="absolute left-3 -top-2 bg-white px-1 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-primary">Port</label>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <input type="text" id="db-name" data-bind="dbConnection.database" class="peer w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder-transparent" placeholder="Database Name" />
+                    <label for="db-name" class="absolute left-3 -top-2 bg-white px-1 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-primary">Database Name</label>
+                </div>
+                
+                <div class="relative">
+                    <input type="text" id="db-username" data-bind="dbConnection.username" class="peer w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder-transparent" placeholder="Username" />
+                    <label for="db-username" class="absolute left-3 -top-2 bg-white px-1 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-primary">Username</label>
+                </div>
+                
+                <div class="relative">
+                    <input type="password" id="db-password" data-bind="dbConnection.password" class="peer w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent placeholder-transparent" placeholder="Password" />
+                    <label for="db-password" class="absolute left-3 -top-2 bg-white px-1 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-primary">Password</label>
+                    <button type="button" class="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+
+                <div class="flex space-x-3">
+                    <button type="button" data-event="click:testConnection" data-implementation="Should test database connection without storing credentials" class="flex-1 bg-gray-200 text-gray-700 p-3 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                        <i class="fas fa-vial mr-2"></i>
+                        Test Connection
+                    </button>
+                    
+                    <button type="submit" data-event="click:connectDatabase" data-implementation="Should establish connection, fetch schema, and store in session" class="flex-1 bg-primary text-white p-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                        <i class="fas fa-plug mr-2"></i>
+                        Connect
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Connection Status -->
+            <div id="connectionStatus" class="hidden mt-4 p-3 rounded-lg">
+                <!-- Status messages will be displayed here -->
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: DatabaseConnectionModal -->
+
+    <!-- @COMPONENT: ChatbotInterface -->
+    <div id="chatbotInterface" class="hidden min-h-screen bg-gray-50">
+        <!-- Header with Database Info -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between max-w-7xl mx-auto">
+                <div class="flex items-center">
+                    <button data-event="click:backToDashboard" class="mr-4 text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div class="bg-primary text-white w-10 h-10 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-robot text-sm"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">KPI Chatbot</h1>
+                        <p class="text-sm text-gray-600">
+                            Connected to <span data-bind="dbConnection.database" class="font-medium">production_db</span> • 
+                            <span class="text-green-600"><i class="fas fa-circle text-xs mr-1"></i>Online</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <button data-event="click:toggleSchemaPanel" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-100">
+                            <i class="fas fa-database mr-2"></i>Schema
+                        </button>
+                        <button data-event="click:toggleKPIPanel" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-lg hover:bg-gray-100">
+                            <i class="fas fa-chart-bar mr-2"></i>KPIs
+                        </button>
+                    </div>
+                    
+                    <button data-event="click:handleLogout" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex h-screen">
+            <!-- Left Sidebar - Schema & KPIs -->
+            <aside class="w-80 bg-white border-r border-gray-200 overflow-y-auto">
+                <!-- Schema Panel -->
+                <div class="p-4 border-b border-gray-200">
+                    <h3 class="font-semibold text-gray-900 mb-3 flex items-center">
+                        <i class="fas fa-database mr-2 text-primary"></i>
+                        Database Schema
+                    </h3>
+                    
+                    <!-- @MAP: schema.tables.map(table => ( -->
+                    <div class="space-y-2 text-sm">
+                        <div class="p-2 bg-gray-50 rounded-lg">
+                            <div class="font-medium text-gray-800 mb-1">employees</div>
+                            <div class="text-xs text-gray-600 ml-2">
+                                <div>• id (int)</div>
+                                <div>• name (varchar)</div>
+                                <div>• department (varchar)</div>
+                                <div>• salary (decimal)</div>
+                                <div>• hire_date (date)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-2 bg-gray-50 rounded-lg">
+                            <div class="font-medium text-gray-800 mb-1">sales</div>
+                            <div class="text-xs text-gray-600 ml-2">
+                                <div>• id (int)</div>
+                                <div>• amount (decimal)</div>
+                                <div>• date (date)</div>
+                                <div>• employee_id (int)</div>
+                                <div>• customer_id (int)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-2 bg-gray-50 rounded-lg">
+                            <div class="font-medium text-gray-800 mb-1">customers</div>
+                            <div class="text-xs text-gray-600 ml-2">
+                                <div>• id (int)</div>
+                                <div>• name (varchar)</div>
+                                <div>• email (varchar)</div>
+                                <div>• created_at (timestamp)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_MAP -->
+                </div>
+
+                <!-- KPI Panel -->
+                <div class="p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-semibold text-gray-900 flex items-center">
+                            <i class="fas fa-chart-bar mr-2 text-primary"></i>
+                            Suggested KPIs
+                        </h3>
+                        <button data-event="click:addCustomKPI" class="text-primary hover:text-blue-700 text-sm">
+                            <i class="fas fa-plus mr-1"></i>Add
+                        </button>
+                    </div>
+                    
+                    <!-- @MAP: suggestedKPIs.map(kpi => ( -->
+                    <div class="space-y-2 text-sm">
+                        <button data-event="click:selectKPI" data-kpi="monthly_sales" class="w-full text-left p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group">
+                            <div class="font-medium text-gray-800 group-hover:text-primary">Monthly Sales</div>
+                            <div class="text-xs text-gray-600 mt-1">Total sales revenue by month</div>
+                        </button>
+                        
+                        <button data-event="click:selectKPI" data-kpi="employee_performance" class="w-full text-left p-3 bg-gray-50 hover:bg-blue-100 rounded-lg transition-colors group">
+                            <div class="font-medium text-gray-800 group-hover:text-primary">Employee Performance</div>
+                            <div class="text-xs text-gray-600 mt-1">Sales performance by employee</div>
+                        </button>
+                        
+                        <button data-event="click:selectKPI" data-kpi="customer_acquisition" class="w-full text-left p-3 bg-gray-50 hover:bg-blue-100 rounded-lg transition-colors group">
+                            <div class="font-medium text-gray-800 group-hover:text-primary">Customer Acquisition</div>
+                            <div class="text-xs text-gray-600 mt-1">New customers per month</div>
+                        </button>
+                        
+                        <button data-event="click:selectKPI" data-kpi="revenue_trends" class="w-full text-left p-3 bg-gray-50 hover:bg-blue-100 rounded-lg transition-colors group">
+                            <div class="font-medium text-gray-800 group-hover:text-primary">Revenue Trends</div>
+                            <div class="text-xs text-gray-600 mt-1">Revenue growth over time</div>
+                        </button>
+                    </div>
+                    <!-- @END_MAP -->
+                </div>
+            </aside>
+
+            <!-- Main Chat Area -->
+            <main class="flex-1 flex flex-col">
+                <!-- Chat Messages -->
+                <div class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <!-- Welcome Message -->
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-sm"></i>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-material max-w-3xl">
+                            <p class="text-gray-800 mb-2">Hello! I'm your KPI assistant. I can help you analyze your data using natural language queries.</p>
+                            <p class="text-gray-600 text-sm">Try asking something like: "Show me monthly sales for the last 6 months" or "What's the average salary by department?"</p>
+                        </div>
+                    </div>
+
+                    <!-- Sample User Message -->
+                    <div class="flex items-start space-x-3 justify-end">
+                        <div class="bg-primary text-white p-4 rounded-2xl rounded-tr-none shadow-material max-w-3xl">
+                            <p>Show me the top 5 employees by sales performance this year</p>
+                        </div>
+                        <div class="bg-bank text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-user text-sm"></i>
+                        </div>
+                    </div>
+
+                    <!-- AI Response with Results -->
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-sm"></i>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-material max-w-4xl w-full">
+                            <p class="text-gray-800 mb-4">Here are the top 5 employees by sales performance this year:</p>
+                            
+                            <!-- Results Toggle -->
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="flex bg-gray-100 rounded-lg p-1">
+                                    <button data-event="click:showTable" class="px-3 py-1 rounded-md bg-white shadow text-sm font-medium text-gray-700">
+                                        <i class="fas fa-table mr-1"></i>Table
+                                    </button>
+                                    <button data-event="click:showChart" class="px-3 py-1 rounded-md text-sm font-medium text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-chart-bar mr-1"></i>Chart
+                                    </button>
+                                </div>
+                                
+                                <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                    <i class="fas fa-database"></i>
+                                    <span>5 rows returned</span>
+                                </div>
+                            </div>
+
+                            <!-- Table View -->
+                            <div id="resultsTable" class="overflow-hidden rounded-lg border border-gray-200">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Sales</th>
+                                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deals Closed</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <!-- @MAP: results.map((row, index) => ( -->
+                                        <tr data-mock="true">
+                                            <td class="px-4 py-3 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                                                        <span class="text-xs font-medium text-gray-600">JD</span>
+                                                    </div>
+                                                    <div class="text-sm font-medium text-gray-900">John Doe</div>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">Sales</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">$125,000</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">48</td>
+                                        </tr>
+                                        <tr data-mock="true">
+                                            <td class="px-4 py-3 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                                                        <span class="text-xs font-medium text-gray-600">JS</span>
+                                                    </div>
+                                                    <div class="text-sm font-medium text-gray-900">Jane Smith</div>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">Sales</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">$118,500</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">42</td>
+                                        </tr>
+                                        <tr data-mock="true">
+                                            <td class="px-4 py-3 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                                                        <span class="text-xs font-medium text-gray-600">MJ</span>
+                                                    </div>
+                                                    <div class="text-sm font-medium text-gray-900">Mike Johnson</div>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">Sales</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">$112,300</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">39</td>
+                                        </tr>
+                                        <tr data-mock="true">
+                                            <td class="px-4 py-3 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                                                        <span class="text-xs font-medium text-gray-600">SB</span>
+                                                    </div>
+                                                    <div class="text-sm font-medium text-gray-900">Sarah Brown</div>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">Sales</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">$108,900</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">35</td>
+                                        </tr>
+                                        <tr data-mock="true">
+                                            <td class="px-4 py-3 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                                                        <span class="text-xs font-medium text-gray-600">DW</span>
+                                                    </div>
+                                                    <div class="text-sm font-medium text-gray-900">David Wilson</div>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">Sales</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">$105,200</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">32</td>
+                                        </tr>
+                                        <!-- @END_MAP -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Chart View (Hidden by default) -->
+                            <div id="resultsChart" class="hidden">
+                                <canvas id="performanceChart" width="400" height="200"></canvas>
+                            </div>
+
+                            <!-- Export Options -->
+                            <div class="mt-4 flex justify-between items-center">
+                                <div class="flex space-x-2">
+                                    <button data-event="click:exportCSV" class="text-sm text-gray-600 hover:text-gray-800 flex items-center">
+                                        <i class="fas fa-download mr-1"></i>Export CSV
+                                    </button>
+                                    <button data-event="click:exportPDF" class="text-sm text-gray-600 hover:text-gray-800 flex items-center">
+                                        <i class="fas fa-file-pdf mr-1"></i>Export PDF
+                                    </button>
+                                </div>
+                                
+                                <div class="text-xs text-gray-500">
+                                    Query executed in 0.25s
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="border-t border-gray-200 bg-white p-4">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="flex items-end space-x-3">
+                            <div class="flex-1">
+                                <div class="relative">
+                                    <textarea 
+                                        data-bind="chatMessage" 
+                                        placeholder="Ask me anything about your KPIs... (e.g., 'Show monthly revenue trends' or 'Which department has the highest average salary?')"
+                                        class="w-full p-4 pr-12 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                                        rows="1"
+                                        data-implementation="Should expand/contract based on content length"
+                                    ></textarea>
+                                    <button 
+                                        data-event="click:sendMessage" 
+                                        data-implementation="Should send message to Gemini API with schema context"
+                                        class="absolute right-3 bottom-3 bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"
+                                    >
+                                        <i class="fas fa-paper-plane text-sm"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Quick Actions -->
+                                <div class="flex items-center space-x-2 mt-2">
+                                    <span class="text-xs text-gray-500">Quick actions:</span>
+                                    <button data-event="click:quickQuery" data-query="monthly_sales" class="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full">Monthly Sales</button>
+                                    <button data-event="click:quickQuery" data-query="top_customers" class="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full">Top Customers</button>
+                                    <button data-event="click:quickQuery" data-query="department_avg" class="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full">Dept. Average</button>
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-col items-center space-y-2">
+                                <button data-event="click:clearChat" class="text-gray-400 hover:text-gray-600 p-2">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: ChatbotInterface -->
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 flex items-center space-x-4">
+            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+            <span class="text-gray-700 font-medium">Processing your request...</span>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="fixed top-4 right-4 space-y-2 z-50">
+        <!-- Toasts will be dynamically inserted here -->
+    </div>
+
+    <script>
+        (function() {
+            // TODO: Implement business logic, API calls, and state management
+            
+            // Mock application state
+            let appState = {
+                currentUser: null,
+                currentSector: null,
+                dbConnection: null,
+                schema: null,
+                isAuthenticated: false,
+                chatMessages: []
+            };
+
+            // Page navigation functions
+            function showPage(pageId) {
+                // Hide all pages
+                document.querySelectorAll('[id$="Page"], [id$="Interface"]').forEach(page => {
+                    page.classList.add('hidden');
+                });
+                
+                // Show target page
+                document.getElementById(pageId).classList.remove('hidden');
+            }
+
+            function showModal(modalId) {
+                document.getElementById(modalId).classList.remove('hidden');
+            }
+
+            function hideModal(modalId) {
+                document.getElementById(modalId).classList.add('hidden');
+            }
+
+            // Toast notification function
+            function showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `p-4 rounded-lg shadow-material text-white ${type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'} transform translate-x-full transition-transform duration-300`;
+                toast.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span>${message}</span>
+                        <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                document.getElementById('toastContainer').appendChild(toast);
+                
+                // Animate in
+                setTimeout(() => {
+                    toast.classList.remove('translate-x-full');
+                }, 100);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full');
+                    setTimeout(() => toast.remove(), 300);
+                }, 5000);
+            }
+
+            // Initialize demo chart
+            function initializeChart() {
+                const ctx = document.getElementById('performanceChart');
+                if (ctx) {
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['John Doe', 'Jane Smith', 'Mike Johnson', 'Sarah Brown', 'David Wilson'],
+                            datasets: [{
+                                label: 'Total Sales ($)',
+                                data: [125000, 118500, 112300, 108900, 105200],
+                                backgroundColor: 'rgba(25, 118, 210, 0.8)',
+                                borderColor: 'rgba(25, 118, 210, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return '$' + value.toLocaleString();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Event handlers (mock implementations)
+            window.mockHandlers = {
+                selectSector: (element) => {
+                    // Remove active state from all sectors
+                    document.querySelectorAll('.sector-btn').forEach(btn => {
+                        btn.classList.remove('border-primary', 'bg-blue-50');
+                    });
+                    
+                    // Add active state to selected sector
+                    element.classList.add('border-primary', 'bg-blue-50');
+                    appState.currentSector = element.dataset.sector;
+                },
+                
+                handleLogin: (e) => {
+                    e.preventDefault();
+                    showToast('Login successful! Welcome to KPI Analytics Hub', 'success');
+                    appState.isAuthenticated = true;
+                    setTimeout(() => showPage('dashboard'), 1000);
+                },
+                
+                openDatabaseModal: () => showModal('databaseModal'),
+                closeDatabaseModal: () => hideModal('databaseModal'),
+                
+                testConnection: () => {
+                    showToast('Testing database connection...', 'info');
+                    setTimeout(() => {
+                        showToast('Connection test successful!', 'success');
+                    }, 2000);
+                },
+                
+                connectDatabase: (e) => {
+                    e.preventDefault();
+                    showToast('Connecting to database and extracting schema...', 'info');
+                    setTimeout(() => {
+                        showToast('Database connected successfully! Schema extracted.', 'success');
+                        hideModal('databaseModal');
+                        setTimeout(() => showPage('chatbotInterface'), 500);
+                        setTimeout(initializeChart, 1000);
+                    }, 3000);
+                },
+                
+                backToDashboard: () => showPage('dashboard'),
+                
+                sendMessage: () => {
+                    const textarea = document.querySelector('textarea[data-bind="chatMessage"]');
+                    if (textarea.value.trim()) {
+                        showToast('Processing your query with AI...', 'info');
+                        textarea.value = '';
+                    }
+                },
+                
+                showTable: () => {
+                    document.getElementById('resultsTable').classList.remove('hidden');
+                    document.getElementById('resultsChart').classList.add('hidden');
+                },
+                
+                showChart: () => {
+                    document.getElementById('resultsTable').classList.add('hidden');
+                    document.getElementById('resultsChart').classList.remove('hidden');
+                },
+                
+                handleLogout: () => {
+                    showToast('Logging out and clearing session...', 'info');
+                    appState = { currentUser: null, currentSector: null, dbConnection: null, schema: null, isAuthenticated: false, chatMessages: [] };
+                    setTimeout(() => showPage('loginPage'), 1000);
+                }
+            };
+
+            // Initialize the application
+            document.addEventListener('DOMContentLoaded', function() {
+                showPage('loginPage');
+                
+                // Add click handlers
+                document.addEventListener('click', function(e) {
+                    if (e.target.dataset.event) {
+                        const [event, handler] = e.target.dataset.event.split(':');
+                        if (event === 'click' && window.mockHandlers[handler]) {
+                            window.mockHandlers[handler](e.target);
+                        }
+                    }
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
