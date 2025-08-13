@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { z } from "zod";
+import { DatabaseConfigService } from "./services/database-config";
 
 // Extend Request interface to include user property
 declare global {
@@ -111,57 +112,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Database connection endpoint
+  // Database connection endpoint with automatic config update
   app.post("/api/connect-db", authenticateToken, async (req: Request, res: Response) => {
     try {
       const connectionData = dbConnectionSchema.parse(req.body);
       const user = req.user;
+      const dbService = DatabaseConfigService.getInstance();
       
-      // Store connection info in session (in memory for now)
-      const sessionKey = user.username;
-      sessions[sessionKey] = {
-        db_connection: connectionData,
-        schema: {
-          tables: {
-            employees: {
-              columns: {
-                id: { type: "integer", nullable: false, default: null },
-                name: { type: "varchar", nullable: false, default: null },
-                department: { type: "varchar", nullable: true, default: null },
-                salary: { type: "numeric", nullable: true, default: null },
-                hire_date: { type: "date", nullable: true, default: null }
-              }
-            },
-            departments: {
-              columns: {
-                id: { type: "integer", nullable: false, default: null },
-                name: { type: "varchar", nullable: false, default: null },
-                budget: { type: "numeric", nullable: true, default: null }
-              }
-            },
-            transactions: {
-              columns: {
-                id: { type: "integer", nullable: false, default: null },
-                amount: { type: "numeric", nullable: false, default: null },
-                transaction_date: { type: "timestamp", nullable: false, default: null },
-                account_id: { type: "integer", nullable: false, default: null },
-                type: { type: "varchar", nullable: false, default: null }
-              }
-            }
-          }
-        }
-      };
-
-      // Generate KPI suggestions based on sector
-      const suggestedKPIs = generateKPISuggestions(user.sector);
-
-      res.json({
-        status: "connected",
-        schema: sessions[sessionKey].schema,
-        suggested_kpis: suggestedKPIs
+      // Create unique connection name for this user session
+      const connectionName = `${user.username}_${Date.now()}`;
+      
+      // Test connection and extract schema
+      const result = await dbService.addConnection(connectionName, {
+        host: connectionData.host,
+        port: connectionData.port,
+        database: connectionData.database,
+        username: connectionData.username,
+        password: connectionData.password
       });
+
+      if (result.success) {
+        // Store in session for backward compatibility
+        const sessionKey = user.username;
+        sessions[sessionKey] = {
+          db_connection: connectionData,
+          schema: result.schema,
+          connectionName: connectionName
+        };
+
+        // Generate KPI suggestions based on sector
+        const suggestedKPIs = generateKPISuggestions(user.sector);
+
+        res.json({
+          status: "connected",
+          schema: result.schema,
+          suggested_kpis: suggestedKPIs,
+          connectionName: connectionName,
+          message: "Database connected and schema extracted successfully"
+        });
+      } else {
+        res.status(400).json({ 
+          message: result.error || "Failed to connect to database" 
+        });
+      }
     } catch (error) {
-      res.status(400).json({ message: "Invalid connection data" });
+      console.error("Database connection error:", error);
+      res.status(500).json({ 
+        message: "Internal server error while connecting to database" 
+      });
     }
   });
 
@@ -198,6 +196,94 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       res.status(400).json({ message: "Invalid query" });
+    }
+  });
+
+  // Get current database configuration
+  app.get("/api/database-config", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const dbService = DatabaseConfigService.getInstance();
+      const currentConnection = dbService.getCurrentConnection();
+      const allConnections = dbService.getAllConnections();
+
+      res.json({
+        success: true,
+        currentConnection,
+        connections: Object.keys(allConnections).map(key => ({
+          id: key,
+          ...allConnections[key],
+          // Don't send password in response
+          password: "***"
+        }))
+      });
+    } catch (error) {
+      console.error("Error getting database config:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to get database configuration"
+      });
+    }
+  });
+
+  // Switch active database connection
+  app.post("/api/switch-database", authenticateToken, async (req: Request, res: Response) => {
+    const switchSchema = z.object({
+      connectionId: z.string()
+    });
+
+    try {
+      const { connectionId } = switchSchema.parse(req.body);
+      const dbService = DatabaseConfigService.getInstance();
+      
+      const success = dbService.setActiveConnection(connectionId);
+      
+      if (success) {
+        const currentConnection = dbService.getCurrentConnection();
+        res.json({
+          success: true,
+          message: "Database connection switched successfully",
+          currentConnection
+        });
+      } else {
+        res.status(400).json({
+          success: false,
+          error: "Invalid connection ID"
+        });
+      }
+    } catch (error) {
+      console.error("Error switching database:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to switch database connection"
+      });
+    }
+  });
+
+  // Remove database connection
+  app.delete("/api/database-connection/:connectionId", authenticateToken, async (req: Request, res: Response) => {
+    try {
+      const { connectionId } = req.params;
+      const dbService = DatabaseConfigService.getInstance();
+      
+      const success = dbService.removeConnection(connectionId);
+      
+      if (success) {
+        res.json({
+          success: true,
+          message: "Database connection removed successfully"
+        });
+      } else {
+        res.status(400).json({
+          success: false,
+          error: "Cannot remove default connection or connection not found"
+        });
+      }
+    } catch (error) {
+      console.error("Error removing database connection:", error);
+      res.status(500).json({
+        success: false,
+        error: "Failed to remove database connection"
+      });
     }
   });
 

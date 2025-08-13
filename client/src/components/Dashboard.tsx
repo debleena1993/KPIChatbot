@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, Database, Shield, Bot, LogOut, Activity } from "lucide-react";
 import { User } from "@/types";
 import DatabaseModal from "./DatabaseModal";
+import DatabaseConfig from "./DatabaseConfig";
 
 interface DashboardProps {
   user: User;
@@ -130,6 +131,11 @@ export default function Dashboard({ user, onLogout, onDatabaseConnected }: Dashb
               <p className="text-gray-600 text-sm">Interactive charts and tables with customizable views for comprehensive data analysis.</p>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Database Configuration */}
+        <div className="mb-6">
+          <DatabaseConfig />
         </div>
 
         {/* Recent Activity */}

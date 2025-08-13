@@ -72,12 +72,20 @@ export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseMo
     try {
       const response = await databaseAPI.connect(data);
       
-      toast({
-        title: "Database connected successfully!",
-        description: `Schema extracted from ${data.database}. Ready for KPI analysis.`
-      });
-      
-      onSuccess();
+      if (response.status === "connected") {
+        const tableCount = response.schema?.totalTables || Object.keys(response.schema?.tables || {}).length;
+        
+        toast({
+          title: "Database connected successfully!",
+          description: `Schema extracted with ${tableCount} tables. Configuration saved automatically.`
+        });
+
+        form.reset();
+        onSuccess();
+        onClose();
+      } else {
+        throw new Error(response.message || "Connection failed");
+      }
     } catch (error) {
       toast({
         title: "Connection failed",
