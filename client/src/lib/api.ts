@@ -22,10 +22,14 @@ export const getAuthHeaders = () => {
 
 // Enhanced API request with auth headers
 export const authenticatedRequest = async (method: string, url: string, data?: any) => {
-  const headers = {
-    'Content-Type': 'application/json',
-    ...getAuthHeaders()
+  const authHeaders = getAuthHeaders();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json'
   };
+  
+  if (authHeaders.Authorization) {
+    headers.Authorization = authHeaders.Authorization;
+  }
 
   const response = await fetch(url, {
     method,
