@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { Pool } from 'pg';
+import fs from "fs";
+import path from "path";
+import { Pool } from "pg";
 
 interface DatabaseConnection {
   host: string;
@@ -19,7 +19,7 @@ interface DatabaseConfig {
   connections: Record<string, DatabaseConnection>;
 }
 
-const CONFIG_PATH = path.join(process.cwd(), 'server/config/database.json');
+const CONFIG_PATH = path.join(process.cwd(), "server/config/database.json");
 
 export class DatabaseConfigService {
   private static instance: DatabaseConfigService;
@@ -38,7 +38,7 @@ export class DatabaseConfigService {
 
   private loadConfig(): void {
     try {
-      const configData = fs.readFileSync(CONFIG_PATH, 'utf8');
+      const configData = fs.readFileSync(CONFIG_PATH, "utf8");
       this.config = JSON.parse(configData);
     } catch (error) {
       // If config doesn't exist, create default
@@ -54,9 +54,9 @@ export class DatabaseConfigService {
             type: "postgresql",
             isActive: false,
             schema: null,
-            lastConnected: null
-          }
-        }
+            lastConnected: null,
+          },
+        },
       };
       this.saveConfig();
     }
@@ -66,8 +66,8 @@ export class DatabaseConfigService {
     try {
       fs.writeFileSync(CONFIG_PATH, JSON.stringify(this.config, null, 2));
     } catch (error) {
-      console.error('Failed to save database config:', error);
-      throw new Error('Could not save database configuration');
+      console.error("Failed to save database config:", error);
+      throw new Error("Could not save database configuration");
     }
   }
 
@@ -78,6 +78,7 @@ export class DatabaseConfigService {
     username: string;
     password: string;
   }): Promise<boolean> {
+    console.log("Testing database connection with params:", connectionParams);
     const pool = new Pool({
       host: connectionParams.host,
       port: connectionParams.port,
@@ -90,12 +91,12 @@ export class DatabaseConfigService {
 
     try {
       const client = await pool.connect();
-      await client.query('SELECT 1');
+      await client.query("SELECT 1");
       client.release();
       await pool.end();
       return true;
     } catch (error) {
-      console.error('Database connection test failed:', error);
+      console.error("Database connection test failed:", error);
       await pool.end();
       return false;
     }
@@ -114,12 +115,14 @@ export class DatabaseConfigService {
       database: connectionParams.database,
       user: connectionParams.username,
       password: connectionParams.password,
-      ssl: false,
+      ssl: {
+        rejectUnauthorized: true, // Default to true if not provided
+      },
     });
 
     try {
       const client = await pool.connect();
-      
+
       // Get all tables in the database
       const tablesQuery = `
         SELECT 
@@ -129,7 +132,7 @@ export class DatabaseConfigService {
         WHERE table_schema NOT IN ('information_schema', 'pg_catalog')
         ORDER BY table_name;
       `;
-      
+
       const tablesResult = await client.query(tablesQuery);
       const tables = [];
 
@@ -152,20 +155,23 @@ export class DatabaseConfigService {
           ORDER BY ordinal_position;
         `;
 
-        const columnsResult = await client.query(columnsQuery, [tableName, tableSchema]);
-        
+        const columnsResult = await client.query(columnsQuery, [
+          tableName,
+          tableSchema,
+        ]);
+
         tables.push({
           name: tableName,
           schema: tableSchema,
-          columns: columnsResult.rows.map(col => ({
+          columns: columnsResult.rows.map((col) => ({
             name: col.column_name,
             type: col.data_type,
-            nullable: col.is_nullable === 'YES',
+            nullable: col.is_nullable === "YES",
             default: col.column_default,
             maxLength: col.character_maximum_length,
             precision: col.numeric_precision,
-            scale: col.numeric_scale
-          }))
+            scale: col.numeric_scale,
+          })),
         });
       }
 
@@ -180,7 +186,7 @@ export class DatabaseConfigService {
           columns[col.name] = {
             type: col.type,
             nullable: col.nullable,
-            default: col.default
+            default: col.default,
           };
         });
         formattedTables[table.name] = { columns };
@@ -190,44 +196,50 @@ export class DatabaseConfigService {
         tables: formattedTables,
         extractedAt: new Date().toISOString(),
         totalTables: tables.length,
-        rawTables: tables // Keep original format for reference
+        rawTables: tables, // Keep original format for reference
       };
     } catch (error) {
-      console.error('Schema extraction failed:', error);
+      console.error("Schema extraction failed:", error);
       await pool.end();
-      throw new Error('Failed to extract database schema');
+      throw new Error("Failed to extract database schema");
     }
   }
 
-  async addConnection(connectionId: string, connectionParams: {
-    host: string;
-    port: number;
-    database: string;
-    username: string;
-    password: string;
-  }): Promise<{ success: boolean; schema?: any; error?: string }> {
+  async addConnection(
+    connectionId: string,
+    connectionParams: {
+      host: string;
+      port: number;
+      database: string;
+      username: string;
+      password: string;
+    },
+  ): Promise<{ success: boolean; schema?: any; error?: string }> {
     try {
       // Test the connection first
       const isValid = await this.testConnection(connectionParams);
       if (!isValid) {
-        return { success: false, error: 'Failed to connect to database with provided credentials' };
+        return {
+          success: false,
+          error: "Failed to connect to database with provided credentials",
+        };
       }
 
       // Extract schema
       const schema = await this.extractSchema(connectionParams);
 
       // Deactivate current active connection
-      Object.keys(this.config.connections).forEach(key => {
+      Object.keys(this.config.connections).forEach((key) => {
         this.config.connections[key].isActive = false;
       });
 
       // Add new connection
       this.config.connections[connectionId] = {
         ...connectionParams,
-        type: 'postgresql',
+        type: "postgresql",
         isActive: true,
         schema: schema,
-        lastConnected: new Date().toISOString()
+        lastConnected: new Date().toISOString(),
       };
 
       this.config.currentConnection = connectionId;
@@ -235,8 +247,12 @@ export class DatabaseConfigService {
 
       return { success: true, schema };
     } catch (error) {
-      console.error('Failed to add database connection:', error);
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown error occurred' };
+      console.error("Failed to add database connection:", error);
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Unknown error occurred",
+      };
     }
   }
 
@@ -258,7 +274,7 @@ export class DatabaseConfigService {
     if (!this.config.connections[connectionId]) return false;
 
     // Deactivate all connections
-    Object.keys(this.config.connections).forEach(key => {
+    Object.keys(this.config.connections).forEach((key) => {
       this.config.connections[key].isActive = false;
     });
 
@@ -270,12 +286,13 @@ export class DatabaseConfigService {
   }
 
   removeConnection(connectionId: string): boolean {
-    if (!this.config.connections[connectionId] || connectionId === 'default') return false;
+    if (!this.config.connections[connectionId] || connectionId === "default")
+      return false;
 
     delete this.config.connections[connectionId];
-    
+
     if (this.config.currentConnection === connectionId) {
-      this.config.currentConnection = 'default';
+      this.config.currentConnection = "default";
       this.config.connections.default.isActive = true;
     }
 
