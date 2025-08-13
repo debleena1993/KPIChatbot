@@ -79,14 +79,22 @@ export class DatabaseConfigService {
     password: string;
   }): Promise<boolean> {
     console.log("Testing database connection with params:", connectionParams);
+    
+    // Check if this is a cloud database that requires SSL
+    const requiresSSL = connectionParams.host.includes('neon.tech') || 
+                       connectionParams.host.includes('supabase.') ||
+                       connectionParams.host.includes('amazonaws.com') ||
+                       connectionParams.host.includes('planetscale.') ||
+                       connectionParams.host.includes('railway.');
+
     const pool = new Pool({
       host: connectionParams.host,
       port: connectionParams.port,
       database: connectionParams.database,
       user: connectionParams.username,
       password: connectionParams.password,
-      ssl: false, // Adjust based on your needs
-      connectionTimeoutMillis: 5000,
+      ssl: requiresSSL ? { rejectUnauthorized: false } : false,
+      connectionTimeoutMillis: 10000,
     });
 
     try {
@@ -109,15 +117,20 @@ export class DatabaseConfigService {
     username: string;
     password: string;
   }): Promise<any> {
+    // Check if this is a cloud database that requires SSL
+    const requiresSSL = connectionParams.host.includes('neon.tech') || 
+                       connectionParams.host.includes('supabase.') ||
+                       connectionParams.host.includes('amazonaws.com') ||
+                       connectionParams.host.includes('planetscale.') ||
+                       connectionParams.host.includes('railway.');
+
     const pool = new Pool({
       host: connectionParams.host,
       port: connectionParams.port,
       database: connectionParams.database,
       user: connectionParams.username,
       password: connectionParams.password,
-      ssl: {
-        rejectUnauthorized: true, // Default to true if not provided
-      },
+      ssl: requiresSSL ? { rejectUnauthorized: false } : false,
     });
 
     try {
