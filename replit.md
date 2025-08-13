@@ -1,0 +1,96 @@
+# Overview
+
+This is a Multi-Sector AI-Powered KPI Chatbot application designed for different business sectors (Banking, Finance, and IT HR). The application allows sector-specific administrators to connect to their databases, extract schemas, and query KPIs using natural language through Google Gemini AI integration. Results are displayed in both tabular format and interactive charts.
+
+The system is built as a full-stack web application with a React frontend and can support either Node.js/Express or Python FastAPI backends. The current implementation shows a hybrid structure with both TypeScript/Node.js server components and Python FastAPI backend files.
+
+# User Preferences
+
+Preferred communication style: Simple, everyday language.
+
+# System Architecture
+
+## Frontend Architecture
+- **Framework**: React with TypeScript using Vite as the build tool
+- **UI Library**: Shadcn/UI components built on top of Radix UI primitives
+- **Styling**: Tailwind CSS with CSS custom properties for theming
+- **State Management**: React Query (TanStack Query) for server state management with local React state for UI state
+- **Routing**: Wouter for client-side routing
+- **Charts**: Recharts library for data visualization (bar, line, and pie charts)
+- **Form Handling**: React Hook Form with Zod validation
+
+## Backend Architecture
+The project shows evidence of both Node.js and Python backend implementations:
+
+### Node.js/Express Backend
+- **Framework**: Express.js with TypeScript
+- **Development**: Vite integration for hot reload in development
+- **Storage Interface**: Abstract storage interface with in-memory implementation
+- **Session Management**: Basic session handling structure
+
+### Python FastAPI Backend
+- **Framework**: FastAPI for REST API endpoints
+- **Authentication**: JWT tokens with bcrypt password hashing
+- **Database**: PostgreSQL with psycopg2 for database connections
+- **AI Integration**: Google Gemini API for natural language to SQL conversion
+- **Session Storage**: In-memory session storage for database connections and schemas
+
+## Database Design
+- **ORM**: Drizzle ORM with PostgreSQL dialect
+- **Schema Definition**: Comprehensive schema including users, sessions, chat messages, and KPI suggestions
+- **Migration System**: Drizzle Kit for database migrations
+- **Connection Strategy**: Session-based database connections that are established per user session
+
+## Authentication & Authorization
+- **Multi-Sector Login**: Predefined admin accounts for three sectors (bank, finance, ithr)
+- **Password Security**: Bcrypt hashing for password storage
+- **Session Management**: JWT tokens with configurable expiration
+- **Role-Based Access**: Sector-specific access control
+
+## AI Integration
+- **Natural Language Processing**: Google Gemini AI for converting natural language queries to SQL
+- **Schema Awareness**: Dynamic schema extraction and context provision to AI model
+- **Query Safety**: Parameterized queries and restrictions on destructive operations
+- **Sector Context**: AI responses tailored to specific business sector contexts
+
+## Data Visualization
+- **Dual Display Modes**: Toggle between tabular and chart views
+- **Chart Types**: Support for bar charts, line charts, and pie charts
+- **Export Functionality**: CSV export capability for tabular data
+- **Responsive Design**: Mobile-optimized layouts with collapsible sidebars
+
+## Security Considerations
+- **SQL Injection Prevention**: Parameterized queries and AI-generated query validation
+- **Authentication Flow**: Secure login with JWT token management
+- **Session Isolation**: Database connections and schemas isolated per user session
+- **CORS Configuration**: Properly configured cross-origin resource sharing
+
+# External Dependencies
+
+## AI Services
+- **Google Gemini API**: Natural language to SQL query generation with schema context awareness
+
+## Database Services
+- **PostgreSQL**: Primary database for application data
+- **Neon Database**: Serverless PostgreSQL provider integration
+- **User-Connected Databases**: Dynamic connections to customer databases for KPI extraction
+
+## Frontend Libraries
+- **Radix UI**: Comprehensive set of low-level UI primitives for accessibility
+- **Tailwind CSS**: Utility-first CSS framework with custom design system
+- **Recharts**: React charting library built on D3
+- **React Hook Form**: Performant forms with easy validation
+- **Zod**: TypeScript-first schema validation
+
+## Backend Libraries
+- **Drizzle ORM**: Type-safe SQL toolkit and ORM
+- **FastAPI**: Modern Python web framework for building APIs
+- **psycopg2**: PostgreSQL adapter for Python
+- **python-jose**: JWT token handling for Python
+- **passlib**: Password hashing utilities
+
+## Development Tools
+- **Vite**: Fast build tool with hot module replacement
+- **TypeScript**: Static type checking
+- **ESBuild**: Fast JavaScript bundler for production builds
+- **Replit**: Cloud development environment integration
