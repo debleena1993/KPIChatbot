@@ -42,6 +42,8 @@ function Router() {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
+      // Clear React Query cache to prevent data leakage between users
+      queryClient.clear();
       clearAuthToken();
       logout();
       setCurrentView('dashboard');

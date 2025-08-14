@@ -35,11 +35,6 @@ ADMIN_ACCOUNTS = {
         "sector": "bank",
         "role": "admin"
     },
-    "admin@finance": {
-        "password_hash": get_password_hash("finance123"),
-        "sector": "finance",
-        "role": "admin"
-    },
     "admin@ithr": {
         "password_hash": get_password_hash("ithr123"),
         "sector": "ithr",

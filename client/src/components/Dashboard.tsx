@@ -28,7 +28,7 @@ export default function Dashboard({ user, onLogout, onDatabaseConnected }: Dashb
     switch (sector) {
       case 'bank': return 'Banking Sector';
       case 'finance': return 'Finance Sector';
-      case 'ithr': return 'IT HR Portal';
+      case 'ithr': return 'HR Portal';
       default: return sector;
     }
   };
@@ -54,10 +54,10 @@ export default function Dashboard({ user, onLogout, onDatabaseConnected }: Dashb
           </div>
 
           <div className="flex items-center space-x-4">
-            {/* Connection Status */}
+            {/* User Info */}
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="text-sm text-gray-600">Database: Not Connected</span>
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span className="text-sm text-gray-600">{user.username}</span>
             </div>
 
             <Button 

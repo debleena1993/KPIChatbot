@@ -45,17 +45,8 @@ export default function Login({ onLogin }: LoginProps) {
       borderColor: "hover:border-green-600"
     },
     {
-      id: "finance", 
-      name: "Finance",
-      description: "Financial Services Analytics",
-      icon: PieChart,
-      color: "bg-purple-600 hover:bg-purple-700",
-      hoverBg: "hover:bg-purple-50",
-      borderColor: "hover:border-purple-600"
-    },
-    {
       id: "ithr",
-      name: "IT HR Portal", 
+      name: "HR Portal", 
       description: "Human Resources Management",
       icon: Users,
       color: "bg-orange-600 hover:bg-orange-700",
@@ -63,6 +54,23 @@ export default function Login({ onLogin }: LoginProps) {
       borderColor: "hover:border-orange-600"
     }
   ];
+
+  // Demo credentials mapping
+  const demoCredentials: Record<string, { username: string; password: string }> = {
+    bank: { username: "admin@bank", password: "bank123" },
+    ithr: { username: "admin@ithr", password: "ithr123" }
+  };
+
+  const handleSectorSelect = (sectorId: string) => {
+    setSelectedSector(sectorId);
+    
+    // Auto-fill demo credentials for selected sector
+    const credentials = demoCredentials[sectorId];
+    if (credentials) {
+      form.setValue("username", credentials.username);
+      form.setValue("password", credentials.password);
+    }
+  };
 
   const handleSubmit = async (data: LoginCredentials) => {
     if (!selectedSector) {
@@ -117,7 +125,7 @@ export default function Login({ onLogin }: LoginProps) {
                 <button
                   key={sector.id}
                   data-testid={`sector-${sector.id}`}
-                  onClick={() => setSelectedSector(sector.id)}
+                  onClick={() => handleSectorSelect(sector.id)}
                   className={`w-full p-4 rounded-xl border-2 transition-all duration-200 text-left group ${
                     selectedSector === sector.id 
                       ? 'border-blue-600 bg-blue-50' 
@@ -194,8 +202,7 @@ export default function Login({ onLogin }: LoginProps) {
             <div className="text-xs font-medium text-gray-700 mb-2">Demo Credentials:</div>
             <div className="text-xs text-gray-600 space-y-1">
               <div>Bank: admin@bank / bank123</div>
-              <div>Finance: admin@finance / finance123</div>
-              <div>IT HR: admin@ithr / ithr123</div>
+              <div>HR: admin@ithr / ithr123</div>
             </div>
           </div>
         </CardContent>

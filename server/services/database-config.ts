@@ -15,8 +15,10 @@ interface DatabaseConnection {
 }
 
 interface DatabaseConfig {
-  currentConnection: string | null;
-  connections: Record<string, DatabaseConnection>;
+  users: Record<string, {
+    currentConnection: string | null;
+    connections: Record<string, DatabaseConnection>;
+  }>;
 }
 
 const CONFIG_PATH = path.join(process.cwd(), "server/config/database.json");
@@ -40,23 +42,24 @@ export class DatabaseConfigService {
     try {
       const configData = fs.readFileSync(CONFIG_PATH, "utf8");
       this.config = JSON.parse(configData);
+      
+      // Migrate old format to new user-specific format if needed
+      if ('currentConnection' in this.config && 'connections' in this.config) {
+        const oldConfig: any = this.config;
+        this.config = {
+          users: {
+            'migration': {
+              currentConnection: oldConfig.currentConnection,
+              connections: oldConfig.connections
+            }
+          }
+        };
+        this.saveConfig();
+      }
     } catch (error) {
-      // If config doesn't exist, create default
+      // If config doesn't exist, create default with user-specific structure
       this.config = {
-        currentConnection: null,
-        connections: {
-          default: {
-            host: "localhost",
-            port: 5432,
-            database: "postgres",
-            username: "postgres",
-            password: "",
-            type: "postgresql",
-            isActive: false,
-            schema: null,
-            lastConnected: null,
-          },
-        },
+        users: {}
       };
       this.saveConfig();
     }
@@ -245,6 +248,7 @@ export class DatabaseConfigService {
   }
 
   async addConnection(
+    userId: string,
     connectionId: string,
     connectionParams: {
       host: string;
@@ -267,13 +271,21 @@ export class DatabaseConfigService {
       // Extract schema
       const schema = await this.extractSchema(connectionParams);
 
-      // Deactivate current active connection
-      Object.keys(this.config.connections).forEach((key) => {
-        this.config.connections[key].isActive = false;
+      // Initialize user config if it doesn't exist
+      if (!this.config.users[userId]) {
+        this.config.users[userId] = {
+          currentConnection: null,
+          connections: {}
+        };
+      }
+
+      // Deactivate current active connection for this user
+      Object.keys(this.config.users[userId].connections).forEach((key) => {
+        this.config.users[userId].connections[key].isActive = false;
       });
 
-      // Add new connection
-      this.config.connections[connectionId] = {
+      // Add new connection for this user
+      this.config.users[userId].connections[connectionId] = {
         ...connectionParams,
         type: "postgresql",
         isActive: true,
@@ -281,7 +293,7 @@ export class DatabaseConfigService {
         lastConnected: new Date().toISOString(),
       };
 
-      this.config.currentConnection = connectionId;
+      this.config.users[userId].currentConnection = connectionId;
       this.saveConfig();
 
       return { success: true, schema };
@@ -295,44 +307,50 @@ export class DatabaseConfigService {
     }
   }
 
-  getCurrentConnection(): DatabaseConnection | null {
-    if (!this.config.currentConnection) return null;
-    return this.config.connections[this.config.currentConnection] || null;
+  getCurrentConnection(userId: string): DatabaseConnection | null {
+    if (!this.config.users[userId]?.currentConnection) return null;
+    return this.config.users[userId].connections[this.config.users[userId].currentConnection!] || null;
   }
 
-  getConnectionSchema(): any {
-    const current = this.getCurrentConnection();
+  getConnectionSchema(userId: string): any {
+    const current = this.getCurrentConnection(userId);
     return current?.schema || null;
   }
 
-  getAllConnections(): Record<string, DatabaseConnection> {
-    return this.config.connections;
+  getAllConnections(userId: string): Record<string, DatabaseConnection> {
+    return this.config.users[userId]?.connections || {};
   }
 
-  setActiveConnection(connectionId: string): boolean {
-    if (!this.config.connections[connectionId]) return false;
+  setActiveConnection(userId: string, connectionId: string): boolean {
+    if (!this.config.users[userId]?.connections[connectionId]) return false;
 
-    // Deactivate all connections
-    Object.keys(this.config.connections).forEach((key) => {
-      this.config.connections[key].isActive = false;
+    // Deactivate all connections for this user
+    Object.keys(this.config.users[userId].connections).forEach((key) => {
+      this.config.users[userId].connections[key].isActive = false;
     });
 
     // Activate selected connection
-    this.config.connections[connectionId].isActive = true;
-    this.config.currentConnection = connectionId;
+    this.config.users[userId].connections[connectionId].isActive = true;
+    this.config.users[userId].currentConnection = connectionId;
     this.saveConfig();
     return true;
   }
 
-  removeConnection(connectionId: string): boolean {
-    if (!this.config.connections[connectionId] || connectionId === "default")
-      return false;
+  removeConnection(userId: string, connectionId: string): boolean {
+    if (!this.config.users[userId]?.connections[connectionId]) return false;
 
-    delete this.config.connections[connectionId];
+    delete this.config.users[userId].connections[connectionId];
 
-    if (this.config.currentConnection === connectionId) {
-      this.config.currentConnection = "default";
-      this.config.connections.default.isActive = true;
+    if (this.config.users[userId].currentConnection === connectionId) {
+      // Find another connection to set as current, or set to null
+      const remainingConnections = Object.keys(this.config.users[userId].connections);
+      if (remainingConnections.length > 0) {
+        const newCurrentConnection = remainingConnections[0];
+        this.config.users[userId].currentConnection = newCurrentConnection;
+        this.config.users[userId].connections[newCurrentConnection].isActive = true;
+      } else {
+        this.config.users[userId].currentConnection = null;
+      }
     }
 
     this.saveConfig();

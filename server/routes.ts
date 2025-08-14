@@ -27,11 +27,6 @@ const ADMIN_ACCOUNTS = {
     sector: "bank" as const,
     role: "admin"
   },
-  "admin@finance": {
-    password: "finance123", 
-    sector: "finance" as const,
-    role: "admin"
-  },
   "admin@ithr": {
     password: "ithr123",
     sector: "ithr" as const,
@@ -124,8 +119,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create unique connection name for this user session
       const connectionName = `${user.username}_${Date.now()}`;
       
-      // Test connection and extract schema
-      const result = await dbService.addConnection(connectionName, {
+      // Test connection and extract schema with user-specific storage
+      const result = await dbService.addConnection(user.username, connectionName, {
         host: connectionData.host,
         port: connectionData.port,
         database: connectionData.database,
@@ -207,12 +202,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get current database configuration
+  // Get current database configuration - user-specific
   app.get("/api/database-config", authenticateToken, async (req: Request, res: Response) => {
     try {
+      const user = req.user;
       const dbService = DatabaseConfigService.getInstance();
-      const currentConnection = dbService.getCurrentConnection();
-      const allConnections = dbService.getAllConnections();
+      const currentConnection = dbService.getCurrentConnection(user.username);
+      const allConnections = dbService.getAllConnections(user.username);
 
       res.json({
         success: true,
@@ -233,7 +229,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Switch active database connection
+  // Switch active database connection - user-specific
   app.post("/api/switch-database", authenticateToken, async (req: Request, res: Response) => {
     const switchSchema = z.object({
       connectionId: z.string()
@@ -241,12 +237,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const { connectionId } = switchSchema.parse(req.body);
+      const user = req.user;
       const dbService = DatabaseConfigService.getInstance();
       
-      const success = dbService.setActiveConnection(connectionId);
+      const success = dbService.setActiveConnection(user.username, connectionId);
       
       if (success) {
-        const currentConnection = dbService.getCurrentConnection();
+        const currentConnection = dbService.getCurrentConnection(user.username);
         res.json({
           success: true,
           message: "Database connection switched successfully",
@@ -267,13 +264,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Remove database connection
+  // Remove database connection - user-specific
   app.delete("/api/database-connection/:connectionId", authenticateToken, async (req: Request, res: Response) => {
     try {
       const { connectionId } = req.params;
+      const user = req.user;
       const dbService = DatabaseConfigService.getInstance();
       
-      const success = dbService.removeConnection(connectionId);
+      const success = dbService.removeConnection(user.username, connectionId);
       
       if (success) {
         res.json({
@@ -283,7 +281,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         res.status(400).json({
           success: false,
-          error: "Cannot remove default connection or connection not found"
+          error: "Connection not found or unable to remove"
         });
       }
     } catch (error) {

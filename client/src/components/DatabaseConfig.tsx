@@ -38,8 +38,16 @@ export default function DatabaseConfig() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Get current user from localStorage to make query user-specific
+  const getCurrentUser = () => {
+    const storedUser = localStorage.getItem('authUser');
+    return storedUser ? JSON.parse(storedUser) : null;
+  };
+
+  const currentUser = getCurrentUser();
+
   const { data: config, isLoading } = useQuery<DatabaseConfigResponse>({
-    queryKey: ["/api/database-config"],
+    queryKey: ["/api/database-config", currentUser?.username],
     queryFn: async () => {
       const token = localStorage.getItem("authToken");
       if (!token) throw new Error("No authentication token");
@@ -80,7 +88,7 @@ export default function DatabaseConfig() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/database-config"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/database-config", currentUser?.username] });
       toast({
         title: "Database switched",
         description: "Active database connection updated successfully",
@@ -115,7 +123,7 @@ export default function DatabaseConfig() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/database-config"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/database-config", currentUser?.username] });
       toast({
         title: "Connection removed",
         description: "Database connection removed successfully",
@@ -179,8 +187,7 @@ export default function DatabaseConfig() {
         </CardHeader>
         <CardContent>
           <div className="text-center text-muted-foreground">
-            No database connections configured. Connect to a database to get
-            started.
+            No database connections yet. Connect to start tracking activity.
           </div>
         </CardContent>
       </Card>
@@ -228,11 +235,9 @@ export default function DatabaseConfig() {
                     <div>
                       Last Connected: {formatDate(connection.lastConnected)}
                     </div>
-                    {connection.schema && (
+                    {connection.schema?.tables && (
                       <div>
-                        Tables:{" "}
-                        {connection.schema.totalTables ||
-                          Object.keys(connection.schema.tables || {}).length}
+                        Tables: {Object.keys(connection.schema.tables).length}
                       </div>
                     )}
                   </div>
