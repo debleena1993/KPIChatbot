@@ -186,7 +186,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Execute the actual SQL query against the connected database
       const queryExecutor = QueryExecutor.getInstance();
-      const results = await queryExecutor.executeQuery(sqlQuery);
+      const results = await queryExecutor.executeQuery(sqlQuery, user.username);
 
       res.json({
         query,

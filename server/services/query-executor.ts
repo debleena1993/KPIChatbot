@@ -73,10 +73,10 @@ export class QueryExecutor {
     return pool;
   }
 
-  async executeQuery(sqlQuery: string): Promise<QueryResult> {
+  async executeQuery(sqlQuery: string, userId: string): Promise<QueryResult> {
     const startTime = Date.now();
     const dbService = DatabaseConfigService.getInstance();
-    const currentConnection = dbService.getCurrentConnection();
+    const currentConnection = dbService.getCurrentConnection(userId);
 
     if (!currentConnection) {
       throw new Error("No active database connection");
