@@ -78,7 +78,13 @@ export class DatabaseConfigService {
     username: string;
     password: string;
   }): Promise<boolean> {
-    console.log("Testing database connection with params:", connectionParams);
+    console.log("Testing database connection with params:", {
+      host: connectionParams.host,
+      port: connectionParams.port,
+      database: connectionParams.database,
+      username: connectionParams.username,
+      password: '***'
+    });
     
     // Check if this is a cloud database that requires SSL
     const requiresSSL = connectionParams.host.includes('neon.tech') || 
@@ -94,19 +100,29 @@ export class DatabaseConfigService {
       user: connectionParams.username,
       password: connectionParams.password,
       ssl: requiresSSL ? { rejectUnauthorized: false } : false,
-      connectionTimeoutMillis: 10000,
+      connectionTimeoutMillis: 30000,
+      idleTimeoutMillis: 30000,
+      max: 1, // Only one connection for testing
+      allowExitOnIdle: true,
     });
 
+    let client;
     try {
-      const client = await pool.connect();
+      client = await pool.connect();
       await client.query("SELECT 1");
-      client.release();
-      await pool.end();
       return true;
     } catch (error) {
       console.error("Database connection test failed:", error);
-      await pool.end();
       return false;
+    } finally {
+      if (client) {
+        client.release();
+      }
+      try {
+        await pool.end();
+      } catch (endError) {
+        console.error("Error ending pool during connection test:", endError);
+      }
     }
   }
 
@@ -131,10 +147,15 @@ export class DatabaseConfigService {
       user: connectionParams.username,
       password: connectionParams.password,
       ssl: requiresSSL ? { rejectUnauthorized: false } : false,
+      connectionTimeoutMillis: 30000,
+      idleTimeoutMillis: 30000,
+      max: 1, // Only one connection for schema extraction
+      allowExitOnIdle: true,
     });
 
+    let client;
     try {
-      const client = await pool.connect();
+      client = await pool.connect();
 
       // Get all tables in the database
       const tablesQuery = `
@@ -188,9 +209,6 @@ export class DatabaseConfigService {
         });
       }
 
-      client.release();
-      await pool.end();
-
       // Format schema to match the existing format expected by the frontend
       const formattedTables: Record<string, any> = {};
       tables.forEach((table: any) => {
@@ -213,8 +231,16 @@ export class DatabaseConfigService {
       };
     } catch (error) {
       console.error("Schema extraction failed:", error);
-      await pool.end();
       throw new Error("Failed to extract database schema");
+    } finally {
+      if (client) {
+        client.release();
+      }
+      try {
+        await pool.end();
+      } catch (endError) {
+        console.error("Error ending pool during schema extraction:", endError);
+      }
     }
   }
 

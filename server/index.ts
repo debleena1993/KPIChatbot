@@ -68,4 +68,28 @@ app.use((req, res, next) => {
   }, () => {
     log(`serving on port ${port}`);
   });
+
+  // Graceful shutdown handling
+  const cleanup = async () => {
+    log('Shutting down gracefully...');
+    try {
+      // Clean up database connections
+      const { QueryExecutor } = await import('./services/query-executor');
+      const queryExecutor = QueryExecutor.getInstance();
+      await queryExecutor.cleanup();
+      
+      // Close the HTTP server
+      server.close(() => {
+        log('HTTP server closed');
+        process.exit(0);
+      });
+    } catch (error) {
+      log(`Error during cleanup: ${error}`);
+      process.exit(1);
+    }
+  };
+
+  process.on('SIGTERM', cleanup);
+  process.on('SIGINT', cleanup);
+  
 })();

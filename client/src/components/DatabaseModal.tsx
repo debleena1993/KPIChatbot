@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { databaseAPI } from "@/lib/api";
-import { DatabaseConnection } from "@/types";
+import { DatabaseConnection, KPISuggestion } from "@/types";
 import { Database, Zap } from "lucide-react";
 
 const databaseSchema = z.object({
@@ -22,7 +22,7 @@ const databaseSchema = z.object({
 interface DatabaseModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (kpiSuggestions?: KPISuggestion[]) => void;
 }
 
 export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseModalProps) {
@@ -77,11 +77,11 @@ export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseMo
         
         toast({
           title: "Database connected successfully!",
-          description: `Schema extracted with ${tableCount} tables. Configuration saved automatically.`
+          description: `Schema extracted with ${tableCount} tables. AI-generated KPI suggestions ready.`
         });
 
         form.reset();
-        onSuccess();
+        onSuccess(response.suggested_kpis);
         onClose();
       } else {
         throw new Error(response.message || "Connection failed");

@@ -36,6 +36,7 @@ export interface KPISuggestion {
   name: string;
   description: string;
   query_template: string;
+  category?: string;
 }
 
 export interface QueryResult {

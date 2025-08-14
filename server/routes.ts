@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { z } from "zod";
 import { DatabaseConfigService } from "./services/database-config";
+import { generateKPISuggestions as generateAIKPISuggestions, generateSQLFromQuery } from "./services/gemini";
+import { QueryExecutor } from "./services/query-executor";
 
 // Extend Request interface to include user property
 declare global {
@@ -140,8 +142,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           connectionName: connectionName
         };
 
-        // Generate KPI suggestions based on sector
-        const suggestedKPIs = generateKPISuggestions(user.sector);
+        // Generate AI-powered KPI suggestions based on schema and sector
+        const suggestedKPIs = await generateAIKPISuggestions(result.schema, user.sector);
 
         res.json({
           status: "connected",
@@ -184,18 +186,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No active database connection" });
       }
 
-      // Mock SQL generation and results for demo
-      const mockSQL = generateMockSQL(query, user.sector);
-      const mockResults = generateMockResults(query, user.sector);
+      // Generate AI-powered SQL query
+      const sqlQuery = await generateSQLFromQuery(query, sessions[sessionKey].schema, user.sector);
+      
+      // Execute the actual SQL query against the connected database
+      const queryExecutor = QueryExecutor.getInstance();
+      const results = await queryExecutor.executeQuery(sqlQuery);
 
       res.json({
         query,
-        sql_query: mockSQL,
-        results: mockResults,
-        execution_time: 0.15
+        sql_query: sqlQuery,
+        results: results,
+        execution_time: results.execution_time
       });
     } catch (error) {
-      res.status(400).json({ message: "Invalid query" });
+      console.error("Query execution error:", error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Query execution failed" 
+      });
     }
   });
 
@@ -300,76 +308,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   return httpServer;
 }
 
-function generateKPISuggestions(sector: string) {
-  const suggestions = [];
-  
-  if (sector === "bank") {
-    suggestions.push(
-      {
-        id: "account_balance",
-        name: "Account Balances",
-        description: "Total account balances by type",
-        query_template: "Show me account balances by account type"
-      },
-      {
-        id: "transaction_volume", 
-        name: "Transaction Volume",
-        description: "Daily transaction volumes",
-        query_template: "Show me daily transaction volumes for the last month"
-      },
-      {
-        id: "loan_performance",
-        name: "Loan Performance", 
-        description: "Loan approval rates and amounts",
-        query_template: "What's the loan approval rate this quarter?"
-      }
-    );
-  } else if (sector === "finance") {
-    suggestions.push(
-      {
-        id: "revenue_trends",
-        name: "Revenue Trends",
-        description: "Revenue trends over time", 
-        query_template: "Show me quarterly revenue trends"
-      },
-      {
-        id: "client_portfolio",
-        name: "Client Portfolio",
-        description: "Client portfolio values",
-        query_template: "Show me client portfolio distribution"
-      },
-      {
-        id: "profit_margins",
-        name: "Profit Margins",
-        description: "Profit margins by service",
-        query_template: "What are the profit margins by service type?"
-      }
-    );
-  } else if (sector === "ithr") {
-    suggestions.push(
-      {
-        id: "employee_count",
-        name: "Employee Count", 
-        description: "Employee headcount by department",
-        query_template: "Show me employee count by department"
-      },
-      {
-        id: "salary_analysis",
-        name: "Salary Analysis",
-        description: "Average salary by role",
-        query_template: "What's the average salary by job title?"
-      },
-      {
-        id: "performance_ratings",
-        name: "Performance Ratings",
-        description: "Employee performance distribution", 
-        query_template: "Show me performance rating distributions"
-      }
-    );
-  }
 
-  return suggestions;
-}
 
 function generateMockSQL(query: string, sector: string): string {
   const lowerQuery = query.toLowerCase();

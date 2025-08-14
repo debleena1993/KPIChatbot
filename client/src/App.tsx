@@ -10,10 +10,12 @@ import Dashboard from "@/components/Dashboard";
 import ChatbotInterface from "@/components/ChatbotInterface";
 import NotFound from "@/pages/not-found";
 import { useState } from "react";
+import { KPISuggestion } from "@/types";
 
 function Router() {
   const { user, isAuthenticated, isLoading, login, logout } = useAuth();
   const [currentView, setCurrentView] = useState<'dashboard' | 'chatbot'>('dashboard');
+  const [suggestedKPIs, setSuggestedKPIs] = useState<KPISuggestion[]>([]);
 
   if (isLoading) {
     return (
@@ -46,7 +48,10 @@ function Router() {
     }
   };
 
-  const handleDatabaseConnected = () => {
+  const handleDatabaseConnected = (kpiSuggestions?: KPISuggestion[]) => {
+    if (kpiSuggestions) {
+      setSuggestedKPIs(kpiSuggestions);
+    }
     setCurrentView('chatbot');
   };
 
@@ -64,6 +69,7 @@ function Router() {
         user={user}
         onBack={handleBackToDashboard}
         onLogout={handleLogout}
+        suggestedKPIs={suggestedKPIs}
       />
     );
   }

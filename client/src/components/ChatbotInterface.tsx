@@ -25,9 +25,10 @@ interface ChatbotInterfaceProps {
   user: User;
   onBack: () => void;
   onLogout: () => void;
+  suggestedKPIs?: KPISuggestion[];
 }
 
-export default function ChatbotInterface({ user, onBack, onLogout }: ChatbotInterfaceProps) {
+export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs: initialKPIs }: ChatbotInterfaceProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +42,12 @@ export default function ChatbotInterface({ user, onBack, onLogout }: ChatbotInte
     // Load schema and add welcome message
     loadSchema();
     addWelcomeMessage();
-  }, []);
+    
+    // If we have initial KPIs from database connection, use them
+    if (initialKPIs && initialKPIs.length > 0) {
+      setSuggestedKPIs(initialKPIs);
+    }
+  }, [initialKPIs]);
 
   useEffect(() => {
     scrollToBottom();
@@ -55,7 +61,11 @@ export default function ChatbotInterface({ user, onBack, onLogout }: ChatbotInte
     try {
       const response = await databaseAPI.getSchema();
       setSchema(response.schema);
-      generateKPISuggestions(response.schema);
+      
+      // Only generate hardcoded suggestions if we don't have AI-generated ones
+      if (!initialKPIs || initialKPIs.length === 0) {
+        generateKPISuggestions(response.schema);
+      }
     } catch (error) {
       toast({
         title: "Failed to load schema",

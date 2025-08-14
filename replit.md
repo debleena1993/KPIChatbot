@@ -4,13 +4,19 @@ This is a Multi-Sector AI-Powered KPI Chatbot application designed for different
 
 The system is built as a full-stack web application with a React frontend and Node.js/Express backend. The application features automatic database configuration management that updates config files when users input database credentials and automatically extracts schemas from connected databases.
 
-## Recent Changes (January 2025)
+## Recent Changes (August 2025)
 - ✓ Implemented automatic database configuration system with persistent JSON configuration files
 - ✓ Added real-time schema extraction from PostgreSQL databases using proper SQL introspection
 - ✓ Created DatabaseConfigService for managing multiple database connections per user session
 - ✓ Built comprehensive Database Configuration UI showing active connections, schema details, and management controls
 - ✓ Enhanced authentication system with proper JWT token handling and bcrypt password security
 - ✓ Integrated dynamic database switching capabilities allowing users to manage multiple connections
+- ✓ **AI-Powered KPI Suggestions** - Implemented Google Gemini AI integration to dynamically generate KPI suggestions based on actual database schema instead of hardcoded suggestions
+- ✓ **Smart SQL Generation** - Added natural language to SQL conversion using Gemini AI with schema-aware context
+- ✓ **FIXED: PostgreSQL Connection Issues** - Resolved connection pool management problems that were causing app crashes
+- ✓ **FIXED: SQL Query Validation** - Enhanced SQL sanitization to handle AI-generated queries with markdown formatting
+- ✓ **Added: Intelligent Fallback System** - Implemented pattern-based SQL generation when AI services are unavailable
+- ✓ **Added: Graceful Shutdown** - Added proper cleanup handling for database connections
 
 # User Preferences
 
@@ -63,6 +69,8 @@ The project shows evidence of both Node.js and Python backend implementations:
 - **Schema Awareness**: Dynamic schema extraction and context provision to AI model
 - **Query Safety**: Parameterized queries and restrictions on destructive operations
 - **Sector Context**: AI responses tailored to specific business sector contexts
+- **Dynamic KPI Generation**: AI analyzes actual database structure to suggest relevant KPIs instead of using hardcoded suggestions
+- **Intelligent Query Suggestions**: Context-aware query templates generated based on available data patterns
 
 ## Data Visualization
 - **Dual Display Modes**: Toggle between tabular and chart views

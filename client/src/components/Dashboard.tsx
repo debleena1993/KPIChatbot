@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, Database, Shield, Bot, LogOut, Activity } from "lucide-react";
-import { User } from "@/types";
+import { User, KPISuggestion } from "@/types";
 import DatabaseModal from "./DatabaseModal";
 import DatabaseConfig from "./DatabaseConfig";
 
 interface DashboardProps {
   user: User;
   onLogout: () => void;
-  onDatabaseConnected: () => void;
+  onDatabaseConnected: (kpiSuggestions?: KPISuggestion[]) => void;
 }
 
 export default function Dashboard({ user, onLogout, onDatabaseConnected }: DashboardProps) {
@@ -173,9 +173,9 @@ export default function Dashboard({ user, onLogout, onDatabaseConnected }: Dashb
       <DatabaseModal 
         isOpen={isDatabaseModalOpen}
         onClose={() => setIsDatabaseModalOpen(false)}
-        onSuccess={() => {
+        onSuccess={(kpiSuggestions) => {
           setIsDatabaseModalOpen(false);
-          onDatabaseConnected();
+          onDatabaseConnected(kpiSuggestions);
         }}
       />
     </div>
