@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY || "" });
 
 export interface KPISuggestion {
   id: string;
@@ -238,7 +238,7 @@ function generateFallbackSQL(query: string, schema: any): string {
   
   if (lowerQuery.includes("payment") || lowerQuery.includes("transaction")) {
     if (tables.includes("payments")) {
-      return "SELECT SUM(amount_paid) as total_payments, COUNT(*) as payment_count FROM payments ORDER BY payment_date DESC LIMIT 10;";
+      return "SELECT SUM(amount_paid) as total_payments, COUNT(*) as payment_count FROM payments;";
     }
   }
   
