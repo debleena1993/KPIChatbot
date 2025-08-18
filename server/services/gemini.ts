@@ -83,39 +83,39 @@ function getFallbackSuggestions(sector: string): KPISuggestion[] {
   const fallbackSuggestions: Record<string, KPISuggestion[]> = {
     bank: [
       {
-        id: "loan_approval_rate",
-        name: "Loan Approval Rate",
-        description: "Percentage of approved loans versus total applications",
-        query_template: "What is the loan approval rate for the last 6 months?",
-        category: "Operational"
-      },
-      {
-        id: "account_growth",
-        name: "Account Growth",
-        description: "Rate of new account openings over time",
-        query_template: "Show me the trend in new account openings",
-        category: "Growth"
-      },
-      {
-        id: "transaction_volume",
-        name: "Transaction Volume",
-        description: "Total transaction amounts processed",
-        query_template: "What is the daily transaction volume?",
-        category: "Operational"
-      },
-      {
-        id: "loan_portfolio_value",
-        name: "Loan Portfolio Value",
-        description: "Total value of outstanding loans",
-        query_template: "What is the total value of our loan portfolio?",
+        id: "total_loan_portfolio",
+        name: "Total Loan Portfolio Value",
+        description: "Sum of all loan amounts currently in the system",
+        query_template: "What is the total value of all loans in our portfolio?",
         category: "Financial"
       },
       {
-        id: "customer_deposits",
-        name: "Customer Deposits",
-        description: "Total customer deposit amounts",
-        query_template: "Show me total customer deposits by account type",
+        id: "loan_by_type_breakdown",
+        name: "Loan Portfolio by Type",
+        description: "Distribution of loan amounts by loan type",
+        query_template: "Show me the breakdown of loans by type",
+        category: "Portfolio"
+      },
+      {
+        id: "monthly_payment_collections",
+        name: "Monthly Payment Collections",
+        description: "Total payments received each month over the last year",
+        query_template: "Show me the monthly payment collection trends",
         category: "Financial"
+      },
+      {
+        id: "customer_loan_analysis",
+        name: "Customer Loan Statistics",
+        description: "Number of customers with active loans",
+        query_template: "How many customers have loans with us?",
+        category: "Customer"
+      },
+      {
+        id: "loan_status_distribution",
+        name: "Loan Status Overview",
+        description: "Distribution of loans by their current status",
+        query_template: "What is the status breakdown of all loans?",
+        category: "Operations"
       }
     ],
     finance: [
@@ -217,6 +217,9 @@ Rules:
 6. Consider the business context of ${sector}
 7. Return ONLY the SQL query with no markdown formatting, no explanations, no code blocks
 8. Start the response directly with "SELECT" keyword
+9. IMPORTANT: Always use NULLIF or CASE statements to prevent division by zero errors
+10. For percentage calculations, use: (numerator * 100.0) / NULLIF(denominator, 0)
+11. For ratios, use: numerator / NULLIF(denominator, 0)
 
 Available schema:
 ${schemaText}`;
@@ -228,7 +231,9 @@ ${schemaText}`;
       },
       contents: `Generate SQL for: ${naturalLanguageQuery}
 
-Remember: Return ONLY the SQL query starting with SELECT, no code blocks or explanations.`,
+Remember: Return ONLY the SQL query starting with SELECT, no code blocks or explanations.
+
+Additional context: If calculating averages, include COUNT to show data availability. For personal loans this year, use WHERE conditions to filter properly.`,
     });
 
     const rawSQL = response.text || "";
@@ -248,6 +253,20 @@ Remember: Return ONLY the SQL query starting with SELECT, no code blocks or expl
     // Remove any leading/trailing whitespace and ensure it starts with SELECT
     cleanSQL = cleanSQL.replace(/^[^S]*SELECT/i, 'SELECT');
     
+    // Ensure proper spacing around SQL keywords
+    cleanSQL = cleanSQL
+      .replace(/\bFROM\b/gi, ' FROM ')
+      .replace(/\bWHERE\b/gi, ' WHERE ')
+      .replace(/\bGROUP BY\b/gi, ' GROUP BY ')
+      .replace(/\bORDER BY\b/gi, ' ORDER BY ')
+      .replace(/\bHAVING\b/gi, ' HAVING ')
+      .replace(/\bJOIN\b/gi, ' JOIN ')
+      .replace(/\bLEFT JOIN\b/gi, ' LEFT JOIN ')
+      .replace(/\bRIGHT JOIN\b/gi, ' RIGHT JOIN ')
+      .replace(/\bINNER JOIN\b/gi, ' INNER JOIN ')
+      .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+      .trim();
+    
     console.log('Cleaned SQL:', cleanSQL);
     return cleanSQL;
   } catch (error) {
@@ -266,35 +285,77 @@ function generateFallbackSQL(query: string, schema: any): string {
     throw new Error("No tables available for querying");
   }
 
-  // Try to match common query patterns
+  // Enhanced fallback patterns based on actual database structure
   if (lowerQuery.includes("total") && lowerQuery.includes("loan")) {
     if (tables.includes("loans")) {
-      return "SELECT SUM(loan_amount) as total_loan_amount, COUNT(*) as total_loans FROM loans;";
+      return "SELECT SUM(COALESCE(loan_amount, 0)) AS total_loan_amount, COUNT(*) AS total_loans FROM loans WHERE loan_amount IS NOT NULL;";
     }
   }
   
-  if (lowerQuery.includes("customer") && lowerQuery.includes("count")) {
-    if (tables.includes("customers")) {
-      return "SELECT COUNT(*) as customer_count FROM customers;";
+  if (lowerQuery.includes("loan") && lowerQuery.includes("approval")) {
+    if (tables.includes("loans") && tables.includes("loan_status")) {
+      return "SELECT (COUNT(CASE WHEN ls.status IN ('Approved', 'Active') THEN 1 END) * 100.0) / NULLIF(COUNT(*), 0) AS approval_rate, COUNT(*) AS total_applications FROM loans l LEFT JOIN loan_status ls ON l.loan_id = ls.loan_id;";
     }
   }
   
-  if (lowerQuery.includes("payment") || lowerQuery.includes("transaction")) {
+  if (lowerQuery.includes("payment") && (lowerQuery.includes("month") || lowerQuery.includes("trend"))) {
     if (tables.includes("payments")) {
-      return "SELECT SUM(amount_paid) as total_payments, COUNT(*) as payment_count FROM payments;";
+      return "SELECT TO_CHAR(payment_date, 'YYYY-MM') AS month, SUM(COALESCE(amount_paid, 0)) AS total_payments FROM payments WHERE payment_date >= CURRENT_DATE - INTERVAL '12 months' GROUP BY month ORDER BY month;";
+    }
+  }
+  
+  if (lowerQuery.includes("customer") && lowerQuery.includes("loan")) {
+    if (tables.includes("customers") && tables.includes("loans")) {
+      return "SELECT COUNT(DISTINCT c.customer_id) AS customers_with_loans, COUNT(l.loan_id) AS total_loans FROM customers c LEFT JOIN loans l ON c.customer_id = l.customer_id WHERE l.loan_id IS NOT NULL;";
     }
   }
   
   if (lowerQuery.includes("loan") && lowerQuery.includes("type")) {
     if (tables.includes("loans")) {
-      return "SELECT loan_type, COUNT(*) as loan_count, AVG(loan_amount) as avg_amount FROM loans GROUP BY loan_type ORDER BY loan_count DESC;";
+      return "SELECT COALESCE(loan_type, 'Unknown') AS loan_type, COUNT(*) AS loan_count, SUM(COALESCE(loan_amount, 0)) AS total_amount FROM loans GROUP BY loan_type ORDER BY loan_count DESC;";
+    }
+  }
+  
+  if (lowerQuery.includes("default") && lowerQuery.includes("rate")) {
+    if (tables.includes("loans") && tables.includes("loan_status")) {
+      return "SELECT (COUNT(CASE WHEN ls.status IN ('Default', 'Defaulted') THEN 1 END) * 100.0) / NULLIF(COUNT(*), 0) AS default_rate FROM loans l LEFT JOIN loan_status ls ON l.loan_id = ls.loan_id;";
+    }
+  }
+  
+  if (lowerQuery.includes("recent") || lowerQuery.includes("new")) {
+    if (tables.includes("loans")) {
+      return "SELECT COUNT(*) AS recent_loans, SUM(COALESCE(loan_amount, 0)) AS recent_loan_amount FROM loans WHERE start_date >= CURRENT_DATE - INTERVAL '30 days';";
+    }
+  }
+  
+  if (lowerQuery.includes("approval") && lowerQuery.includes("rate")) {
+    if (tables.includes("loans") || tables.includes("loan_applications")) {
+      const table = tables.includes("loan_applications") ? "loan_applications" : "loans";
+      return `SELECT 
+        (COUNT(CASE WHEN status = 'approved' THEN 1 END) * 100.0) / NULLIF(COUNT(*), 0) AS approval_rate,
+        COUNT(*) AS total_applications,
+        COUNT(CASE WHEN status = 'approved' THEN 1 END) AS approved_count
+        FROM ${table};`;
     }
   }
 
-  // Default fallback - show data from the first available table
+  // Enhanced default fallback based on available tables
+  if (tables.includes("loans")) {
+    return "SELECT COUNT(*) AS total_loans, SUM(COALESCE(loan_amount, 0)) AS total_loan_value, AVG(COALESCE(loan_amount, 0)) AS average_loan_amount FROM loans WHERE loan_amount > 0;";
+  }
+  
+  if (tables.includes("payments")) {
+    return "SELECT COUNT(*) AS total_payments, SUM(COALESCE(amount_paid, 0)) AS total_amount_collected FROM payments WHERE amount_paid > 0;";
+  }
+  
+  if (tables.includes("customers")) {
+    return "SELECT COUNT(*) AS total_customers FROM customers;";
+  }
+  
+  // Final fallback - show data from the first available table
   const firstTable = tables[0];
   const columns = Object.keys(schema.tables[firstTable].columns || {});
-  const limitedColumns = columns.slice(0, 5).join(", "); // Limit to first 5 columns
+  const limitedColumns = columns.slice(0, 5).join(", ");
   
   return `SELECT ${limitedColumns} FROM ${firstTable} LIMIT 10;`;
 }

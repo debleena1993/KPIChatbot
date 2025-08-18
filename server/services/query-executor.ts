@@ -95,12 +95,26 @@ export class QueryExecutor {
       if (sanitizedQuery.startsWith('```sql') || sanitizedQuery.startsWith('```')) {
         const lines = sanitizedQuery.split('\n');
         const sqlLines = lines.slice(1, -1); // Remove first and last lines (```sql and ```)
-        sanitizedQuery = sqlLines.join('\n').trim();
+        sanitizedQuery = sqlLines.join(' ').trim(); // Join with space instead of newline
       }
       
       // Remove any remaining markdown or extra formatting
       sanitizedQuery = sanitizedQuery.replace(/^```sql\s*/i, '').replace(/\s*```$/, '');
-      sanitizedQuery = sanitizedQuery.trim();
+      
+      // Ensure proper SQL formatting with correct spacing
+      sanitizedQuery = sanitizedQuery
+        .replace(/\s+/g, ' ') // Replace multiple spaces/newlines with single space
+        .replace(/\bFROM\b/gi, ' FROM ')
+        .replace(/\bWHERE\b/gi, ' WHERE ')
+        .replace(/\bGROUP BY\b/gi, ' GROUP BY ')
+        .replace(/\bORDER BY\b/gi, ' ORDER BY ')
+        .replace(/\bHAVING\b/gi, ' HAVING ')
+        .replace(/\bJOIN\b/gi, ' JOIN ')
+        .replace(/\bLEFT JOIN\b/gi, ' LEFT JOIN ')
+        .replace(/\bRIGHT JOIN\b/gi, ' RIGHT JOIN ')
+        .replace(/\bINNER JOIN\b/gi, ' INNER JOIN ')
+        .replace(/\s+/g, ' ') // Clean up any double spaces
+        .trim();
       
       // Log the sanitized query for debugging
       console.log('Original SQL:', sqlQuery);
@@ -112,18 +126,36 @@ export class QueryExecutor {
 
       const result = await client.query(sanitizedQuery);
       
+      // Handle null values in results more intelligently
+      const cleanedRows = result.rows.map(row => {
+        const cleanedRow: any = {};
+        for (const [key, value] of Object.entries(row)) {
+          // Only convert null to 0 for chart processing, preserve nulls for display
+          if (value === null) {
+            // For averages, counts, sums - preserve null to show "No data"
+            if (key.toLowerCase().includes('avg') || key.toLowerCase().includes('average')) {
+              cleanedRow[key] = null;
+            } else {
+              cleanedRow[key] = 0;
+            }
+          } else {
+            cleanedRow[key] = value;
+          }
+        }
+        return cleanedRow;
+      });
+      
       const executionTime = (Date.now() - startTime) / 1000;
-      const rows = result.rows;
       const columns = result.fields.map(field => field.name);
 
-      // Generate chart data based on the results
-      const chartData = this.generateChartData(rows, columns);
+      // Generate chart data based on the cleaned results
+      const chartData = this.generateChartData(cleanedRows, columns);
 
       return {
-        table_data: rows,
+        table_data: cleanedRows,
         chart_data: chartData,
         columns: columns,
-        row_count: rows.length,
+        row_count: cleanedRows.length,
         execution_time: executionTime
       };
 

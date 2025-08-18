@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { QueryResult } from "@/types";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
-import { Table as TableIcon, BarChart3, Download, Database, ChevronDown, ChevronUp, Copy } from "lucide-react";
+import { Table as TableIcon, BarChart3, Download, Database, ChevronDown, ChevronUp, Copy, Brain, Info } from "lucide-react";
 
 interface ResultsDisplayProps {
   results: QueryResult;
@@ -14,18 +14,43 @@ interface ResultsDisplayProps {
 export default function ResultsDisplay({ results }: ResultsDisplayProps) {
   const [viewMode, setViewMode] = useState<'table' | 'chart'>('table');
   const [showFullSQL, setShowFullSQL] = useState(false);
+  const [showInsights, setShowInsights] = useState(false);
 
   const { table_data, chart_data, columns, row_count, execution_time } = results.results;
+  const isLangGraphEnhanced = (results as any).langgraph_enhanced || false;
+  const intelligentConfig = chart_data?.intelligent_config;
 
-  const formatValue = (value: any): string => {
-    if (value === null || value === undefined) return 'N/A';
+  const formatValue = (value: any, columnName?: string): string => {
+    if (value === null || value === undefined) {
+      return <span className="text-gray-400 italic">No data available</span> as any;
+    }
+    
     if (typeof value === 'number') {
-      // Format large numbers with commas
+      const colName = columnName?.toLowerCase() || '';
+      
+      // Format currency values (loan amounts, payments, etc.)
+      if (colName.includes('amount') || colName.includes('loan') || colName.includes('payment') || colName.includes('avg')) {
+        return value.toLocaleString('en-US', { 
+          style: 'currency', 
+          currency: 'USD',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+      
+      // Format percentages
+      if (colName.includes('rate') || colName.includes('percent')) {
+        return `${value.toFixed(2)}%`;
+      }
+      
+      // Format regular numbers with commas for readability
       if (Math.abs(value) >= 1000) {
         return value.toLocaleString();
       }
+      
       return value.toString();
     }
+    
     return String(value);
   };
 
@@ -191,9 +216,18 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
               </Button>
             </div>
             
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <Database className="h-4 w-4" />
-              <span>{row_count} rows returned</span>
+            <div className="flex items-center space-x-4 text-sm text-gray-600">
+              <div className="flex items-center space-x-2">
+                <Database className="h-4 w-4" />
+                <span>{row_count} rows returned</span>
+              </div>
+              
+              {isLangGraphEnhanced && (
+                <div className="flex items-center space-x-2 text-[#FD5108]">
+                  <Brain className="h-4 w-4" />
+                  <span>AI Enhanced</span>
+                </div>
+              )}
             </div>
           </div>
           
@@ -208,6 +242,61 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
             Export CSV
           </Button>
         </div>
+
+        {/* LangGraph Insights */}
+        {isLangGraphEnhanced && intelligentConfig && (
+          <div className="mb-4 p-3 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Brain className="h-4 w-4 text-[#FD5108]" />
+                <span className="text-sm font-medium text-gray-800">AI Chart Intelligence</span>
+                <Badge variant="secondary" className="text-xs bg-[#FD5108] text-white">
+                  LangGraph Enhanced
+                </Badge>
+              </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setShowInsights(!showInsights)}
+                className="h-6 px-2 text-gray-600 hover:text-gray-800"
+              >
+                <Info className="h-3 w-3 mr-1" />
+                {showInsights ? 'Hide' : 'Show'} Insights
+                {showInsights ? <ChevronUp className="h-3 w-3 ml-1" /> : <ChevronDown className="h-3 w-3 ml-1" />}
+              </Button>
+            </div>
+            
+            {showInsights && (
+              <div className="mt-3 text-sm text-gray-700">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="font-medium">Chart Type: <span className="text-[#FD5108]">{intelligentConfig.chart_type}</span></p>
+                    {intelligentConfig.reason && (
+                      <p className="text-gray-600 mt-1">{intelligentConfig.reason}</p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-medium">Data Analysis:</p>
+                    {intelligentConfig.data_analysis && (
+                      <div className="text-gray-600 mt-1 space-y-1">
+                        <p>• {intelligentConfig.data_analysis.numeric_columns?.length || 0} numeric columns</p>
+                        <p>• {intelligentConfig.data_analysis.categorical_columns?.length || 0} categorical columns</p>
+                        <p>• {intelligentConfig.data_analysis.total_rows || 0} total rows</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {intelligentConfig.agent_insights && (
+                  <div className="mt-3 p-2 bg-white rounded border border-orange-200">
+                    <p className="font-medium text-gray-800">AI Insights:</p>
+                    <p className="text-gray-600 mt-1 text-xs whitespace-pre-line">{intelligentConfig.agent_insights}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Results Content */}
         {viewMode === 'table' ? (
@@ -228,7 +317,7 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
                     <TableRow key={index} data-testid={`table-row-${index}`}>
                       {columns.map((column) => (
                         <TableCell key={column} className="py-2">
-                          {formatValue(row[column])}
+                          {formatValue(row[column], column)}
                         </TableCell>
                       ))}
                     </TableRow>

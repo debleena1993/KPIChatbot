@@ -49,11 +49,26 @@ export interface QueryResult {
       data: any[];
       xAxis: string;
       yAxis: string;
+      intelligent_config?: {
+        chart_type: string;
+        x_axis: string;
+        y_axis: string;
+        reason?: string;
+        enhanced_by_langgraph?: boolean;
+        agent_insights?: string;
+        data_analysis?: {
+          numeric_columns?: string[];
+          categorical_columns?: string[];
+          date_columns?: string[];
+          total_rows?: number;
+        };
+      };
     };
     columns: string[];
     row_count: number;
     execution_time: number;
   };
+  langgraph_enhanced?: boolean;
 }
 
 export interface ChatMessage {

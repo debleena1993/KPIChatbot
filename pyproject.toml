@@ -1,0 +1,10 @@
+[project]
+name = "repl-nix-workspace"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.11"
+dependencies = [
+    "langchain-core>=0.3.74",
+    "langchain-google-genai>=2.1.9",
+    "langgraph>=0.6.5",
+]
