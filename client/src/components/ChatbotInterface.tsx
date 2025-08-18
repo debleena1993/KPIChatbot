@@ -221,7 +221,7 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
               />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-[#1A1A1A]">PWC KPI Chatbot</h1>
+              <h1 className="text-xl font-bold text-[#1A1A1A]">KPI Chatbot</h1>
               <p className="text-sm text-[#A1A8B3]">
                 Connected to database • 
                 <span className="text-[#FD5108] ml-1">
