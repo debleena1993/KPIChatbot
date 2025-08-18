@@ -2345,7 +2345,7 @@
                 }
               }
             },
-            "extractedAt": "2025-08-18T21:11:22.020Z",
+            "extractedAt": "2025-08-18T21:22:24.131Z",
             "totalTables": 5,
             "rawTables": [
               {
@@ -2587,7 +2587,7 @@
               }
             ]
           },
-          "lastConnected": "2025-08-18T21:11:22.021Z"
+          "lastConnected": "2025-08-18T21:22:24.131Z"
         }
       }
     },
