@@ -2226,7 +2226,7 @@
       }
     },
     "admin@bank": {
-      "currentConnection": "admin@bank_1755201086279",
+      "currentConnection": "admin@bank_1755499329124",
       "connections": {
         "admin@bank_1755178485451": {
           "host": "ep-billowing-bird-aen4uhk2-pooler.c-2.us-east-2.aws.neon.tech",
@@ -3679,7 +3679,7 @@
           "username": "neondb_owner",
           "password": "npg_q89GySPsovdH",
           "type": "postgresql",
-          "isActive": true,
+          "isActive": false,
           "schema": {
             "tables": {
               "customers": {
@@ -4032,11 +4032,1455 @@
             ]
           },
           "lastConnected": "2025-08-14T19:51:27.388Z"
+        },
+        "admin@bank_1755497300410": {
+          "host": "ep-billowing-bird-aen4uhk2-pooler.c-2.us-east-2.aws.neon.tech",
+          "port": 5432,
+          "database": "bank_portal",
+          "username": "neondb_owner",
+          "password": "npg_q89GySPsovdH",
+          "type": "postgresql",
+          "isActive": false,
+          "schema": {
+            "tables": {
+              "customers": {
+                "columns": {
+                  "customer_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('customers_customer_id_seq'::regclass)"
+                  },
+                  "name": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "email": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "city": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "phone": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  }
+                }
+              },
+              "loan_status": {
+                "columns": {
+                  "status_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loan_status_status_id_seq'::regclass)"
+                  },
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "status": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "loans": {
+                "columns": {
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loans_loan_id_seq'::regclass)"
+                  },
+                  "customer_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "loan_type": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "loan_amount": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "interest_rate": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "start_date": {
+                    "type": "date",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "payments": {
+                "columns": {
+                  "payment_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payments_payment_id_seq'::regclass)"
+                  },
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "amount_paid": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "payment_date": {
+                    "type": "date",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              }
+            },
+            "extractedAt": "2025-08-18T06:08:21.376Z",
+            "totalTables": 5,
+            "rawTables": [
+              {
+                "name": "customers",
+                "schema": "bank_portal",
+                "columns": [
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('bank_portal.customers_customer_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "email",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 150,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "city",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "phone",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 15,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "customers",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('customers_customer_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "email",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 150,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "city",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "phone",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 15,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "loan_status",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "status_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loan_status_status_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "status",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 20,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "loans",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loans_loan_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_type",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "loan_amount",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 12,
+                    "scale": 2
+                  },
+                  {
+                    "name": "interest_rate",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 5,
+                    "scale": 2
+                  },
+                  {
+                    "name": "start_date",
+                    "type": "date",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "payments",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "payment_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payments_payment_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "amount_paid",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 12,
+                    "scale": 2
+                  },
+                  {
+                    "name": "payment_date",
+                    "type": "date",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              }
+            ]
+          },
+          "lastConnected": "2025-08-18T06:08:21.377Z"
+        },
+        "admin@bank_1755498393898": {
+          "host": "ep-billowing-bird-aen4uhk2-pooler.c-2.us-east-2.aws.neon.tech",
+          "port": 5432,
+          "database": "bank_portal",
+          "username": "neondb_owner",
+          "password": "npg_q89GySPsovdH",
+          "type": "postgresql",
+          "isActive": false,
+          "schema": {
+            "tables": {
+              "customers": {
+                "columns": {
+                  "customer_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('customers_customer_id_seq'::regclass)"
+                  },
+                  "name": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "email": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "city": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "phone": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  }
+                }
+              },
+              "loan_status": {
+                "columns": {
+                  "status_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loan_status_status_id_seq'::regclass)"
+                  },
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "status": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "loans": {
+                "columns": {
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loans_loan_id_seq'::regclass)"
+                  },
+                  "customer_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "loan_type": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "loan_amount": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "interest_rate": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "start_date": {
+                    "type": "date",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "payments": {
+                "columns": {
+                  "payment_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payments_payment_id_seq'::regclass)"
+                  },
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "amount_paid": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "payment_date": {
+                    "type": "date",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              }
+            },
+            "extractedAt": "2025-08-18T06:26:34.877Z",
+            "totalTables": 5,
+            "rawTables": [
+              {
+                "name": "customers",
+                "schema": "bank_portal",
+                "columns": [
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('bank_portal.customers_customer_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "email",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 150,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "city",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "phone",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 15,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "customers",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('customers_customer_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "email",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 150,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "city",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "phone",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 15,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "loan_status",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "status_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loan_status_status_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "status",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 20,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "loans",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loans_loan_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_type",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "loan_amount",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 12,
+                    "scale": 2
+                  },
+                  {
+                    "name": "interest_rate",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 5,
+                    "scale": 2
+                  },
+                  {
+                    "name": "start_date",
+                    "type": "date",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "payments",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "payment_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payments_payment_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "amount_paid",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 12,
+                    "scale": 2
+                  },
+                  {
+                    "name": "payment_date",
+                    "type": "date",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              }
+            ]
+          },
+          "lastConnected": "2025-08-18T06:26:34.878Z"
+        },
+        "admin@bank_1755498902203": {
+          "host": "ep-billowing-bird-aen4uhk2-pooler.c-2.us-east-2.aws.neon.tech",
+          "port": 5432,
+          "database": "bank_portal",
+          "username": "neondb_owner",
+          "password": "npg_q89GySPsovdH",
+          "type": "postgresql",
+          "isActive": false,
+          "schema": {
+            "tables": {
+              "customers": {
+                "columns": {
+                  "customer_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('customers_customer_id_seq'::regclass)"
+                  },
+                  "name": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "email": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "city": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "phone": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  }
+                }
+              },
+              "loan_status": {
+                "columns": {
+                  "status_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loan_status_status_id_seq'::regclass)"
+                  },
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "status": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "loans": {
+                "columns": {
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loans_loan_id_seq'::regclass)"
+                  },
+                  "customer_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "loan_type": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "loan_amount": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "interest_rate": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "start_date": {
+                    "type": "date",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "payments": {
+                "columns": {
+                  "payment_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payments_payment_id_seq'::regclass)"
+                  },
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "amount_paid": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "payment_date": {
+                    "type": "date",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              }
+            },
+            "extractedAt": "2025-08-18T06:35:03.135Z",
+            "totalTables": 5,
+            "rawTables": [
+              {
+                "name": "customers",
+                "schema": "bank_portal",
+                "columns": [
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('bank_portal.customers_customer_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "email",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 150,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "city",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "phone",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 15,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "customers",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('customers_customer_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "email",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 150,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "city",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "phone",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 15,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "loan_status",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "status_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loan_status_status_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "status",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 20,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "loans",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loans_loan_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_type",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "loan_amount",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 12,
+                    "scale": 2
+                  },
+                  {
+                    "name": "interest_rate",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 5,
+                    "scale": 2
+                  },
+                  {
+                    "name": "start_date",
+                    "type": "date",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "payments",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "payment_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payments_payment_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "amount_paid",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 12,
+                    "scale": 2
+                  },
+                  {
+                    "name": "payment_date",
+                    "type": "date",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              }
+            ]
+          },
+          "lastConnected": "2025-08-18T06:35:03.135Z"
+        },
+        "admin@bank_1755499329124": {
+          "host": "ep-billowing-bird-aen4uhk2-pooler.c-2.us-east-2.aws.neon.tech",
+          "port": 5432,
+          "database": "bank_portal",
+          "username": "neondb_owner",
+          "password": "npg_q89GySPsovdH",
+          "type": "postgresql",
+          "isActive": true,
+          "schema": {
+            "tables": {
+              "customers": {
+                "columns": {
+                  "customer_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('customers_customer_id_seq'::regclass)"
+                  },
+                  "name": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "email": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "city": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "phone": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  }
+                }
+              },
+              "loan_status": {
+                "columns": {
+                  "status_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loan_status_status_id_seq'::regclass)"
+                  },
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "status": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "loans": {
+                "columns": {
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loans_loan_id_seq'::regclass)"
+                  },
+                  "customer_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "loan_type": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "loan_amount": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "interest_rate": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "start_date": {
+                    "type": "date",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "payments": {
+                "columns": {
+                  "payment_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payments_payment_id_seq'::regclass)"
+                  },
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "amount_paid": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "payment_date": {
+                    "type": "date",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              }
+            },
+            "extractedAt": "2025-08-18T06:42:10.131Z",
+            "totalTables": 5,
+            "rawTables": [
+              {
+                "name": "customers",
+                "schema": "bank_portal",
+                "columns": [
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('bank_portal.customers_customer_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "email",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 150,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "city",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "phone",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 15,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "customers",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('customers_customer_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "email",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 150,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "city",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "phone",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 15,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "loan_status",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "status_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loan_status_status_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "status",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 20,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "loans",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loans_loan_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_type",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "loan_amount",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 12,
+                    "scale": 2
+                  },
+                  {
+                    "name": "interest_rate",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 5,
+                    "scale": 2
+                  },
+                  {
+                    "name": "start_date",
+                    "type": "date",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "payments",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "payment_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payments_payment_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "amount_paid",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 12,
+                    "scale": 2
+                  },
+                  {
+                    "name": "payment_date",
+                    "type": "date",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              }
+            ]
+          },
+          "lastConnected": "2025-08-18T06:42:10.132Z"
         }
       }
     },
     "admin@ithr": {
-      "currentConnection": "admin@ithr_1755196452430",
+      "currentConnection": "admin@ithr_1755501405093",
       "connections": {
         "admin@ithr_1755196452430": {
           "host": "ep-orange-haze-ae9mvpy7-pooler.c-2.us-east-2.aws.neon.tech",
@@ -4045,7 +5489,7 @@
           "username": "neondb_owner",
           "password": "npg_HKcx2vz5eFul",
           "type": "postgresql",
-          "isActive": true,
+          "isActive": false,
           "schema": {
             "tables": {
               "attendance": {
@@ -4441,6 +5885,1218 @@
             ]
           },
           "lastConnected": "2025-08-14T18:34:14.094Z"
+        },
+        "admin@ithr_1755499689138": {
+          "host": "ep-orange-haze-ae9mvpy7-pooler.c-2.us-east-2.aws.neon.tech",
+          "port": 5432,
+          "database": "hr_portal",
+          "username": "neondb_owner",
+          "password": "npg_HKcx2vz5eFul",
+          "type": "postgresql",
+          "isActive": false,
+          "schema": {
+            "tables": {
+              "attendance": {
+                "columns": {
+                  "attendance_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('attendance_attendance_id_seq'::regclass)"
+                  },
+                  "employee_id": {
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "date": {
+                    "type": "date",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "status": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  }
+                }
+              },
+              "departments": {
+                "columns": {
+                  "department_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('departments_department_id_seq'::regclass)"
+                  },
+                  "department_name": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "employees": {
+                "columns": {
+                  "employee_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('employees_employee_id_seq'::regclass)"
+                  },
+                  "first_name": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "last_name": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "email": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "phone": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "hire_date": {
+                    "type": "date",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "department_id": {
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "job_title_id": {
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "salary": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  }
+                }
+              },
+              "job_titles": {
+                "columns": {
+                  "job_title_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('job_titles_job_title_id_seq'::regclass)"
+                  },
+                  "title_name": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "payroll": {
+                "columns": {
+                  "payroll_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payroll_payroll_id_seq'::regclass)"
+                  },
+                  "employee_id": {
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "pay_date": {
+                    "type": "date",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "basic_salary": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "bonus": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "deductions": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "net_pay": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  }
+                }
+              }
+            },
+            "extractedAt": "2025-08-18T06:48:10.127Z",
+            "totalTables": 5,
+            "rawTables": [
+              {
+                "name": "attendance",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "attendance_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('attendance_attendance_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "employee_id",
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "date",
+                    "type": "date",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "status",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 20,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "departments",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "department_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('departments_department_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "department_name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "employees",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "employee_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('employees_employee_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "first_name",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "last_name",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "email",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "phone",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 20,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "hire_date",
+                    "type": "date",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "department_id",
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "job_title_id",
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "salary",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  }
+                ]
+              },
+              {
+                "name": "job_titles",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "job_title_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('job_titles_job_title_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "title_name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "payroll",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "payroll_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payroll_payroll_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "employee_id",
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "pay_date",
+                    "type": "date",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "basic_salary",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  },
+                  {
+                    "name": "bonus",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  },
+                  {
+                    "name": "deductions",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  },
+                  {
+                    "name": "net_pay",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  }
+                ]
+              }
+            ]
+          },
+          "lastConnected": "2025-08-18T06:48:10.128Z"
+        },
+        "admin@ithr_1755500961623": {
+          "host": "ep-orange-haze-ae9mvpy7-pooler.c-2.us-east-2.aws.neon.tech",
+          "port": 5432,
+          "database": "hr_portal",
+          "username": "neondb_owner",
+          "password": "npg_HKcx2vz5eFul",
+          "type": "postgresql",
+          "isActive": false,
+          "schema": {
+            "tables": {
+              "attendance": {
+                "columns": {
+                  "attendance_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('attendance_attendance_id_seq'::regclass)"
+                  },
+                  "employee_id": {
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "date": {
+                    "type": "date",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "status": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  }
+                }
+              },
+              "departments": {
+                "columns": {
+                  "department_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('departments_department_id_seq'::regclass)"
+                  },
+                  "department_name": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "employees": {
+                "columns": {
+                  "employee_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('employees_employee_id_seq'::regclass)"
+                  },
+                  "first_name": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "last_name": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "email": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "phone": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "hire_date": {
+                    "type": "date",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "department_id": {
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "job_title_id": {
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "salary": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  }
+                }
+              },
+              "job_titles": {
+                "columns": {
+                  "job_title_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('job_titles_job_title_id_seq'::regclass)"
+                  },
+                  "title_name": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "payroll": {
+                "columns": {
+                  "payroll_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payroll_payroll_id_seq'::regclass)"
+                  },
+                  "employee_id": {
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "pay_date": {
+                    "type": "date",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "basic_salary": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "bonus": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "deductions": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "net_pay": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  }
+                }
+              }
+            },
+            "extractedAt": "2025-08-18T07:09:22.581Z",
+            "totalTables": 5,
+            "rawTables": [
+              {
+                "name": "attendance",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "attendance_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('attendance_attendance_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "employee_id",
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "date",
+                    "type": "date",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "status",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 20,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "departments",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "department_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('departments_department_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "department_name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "employees",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "employee_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('employees_employee_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "first_name",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "last_name",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "email",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "phone",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 20,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "hire_date",
+                    "type": "date",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "department_id",
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "job_title_id",
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "salary",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  }
+                ]
+              },
+              {
+                "name": "job_titles",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "job_title_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('job_titles_job_title_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "title_name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "payroll",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "payroll_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payroll_payroll_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "employee_id",
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "pay_date",
+                    "type": "date",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "basic_salary",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  },
+                  {
+                    "name": "bonus",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  },
+                  {
+                    "name": "deductions",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  },
+                  {
+                    "name": "net_pay",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  }
+                ]
+              }
+            ]
+          },
+          "lastConnected": "2025-08-18T07:09:22.581Z"
+        },
+        "admin@ithr_1755501405093": {
+          "host": "ep-orange-haze-ae9mvpy7-pooler.c-2.us-east-2.aws.neon.tech",
+          "port": 5432,
+          "database": "hr_portal",
+          "username": "neondb_owner",
+          "password": "npg_HKcx2vz5eFul",
+          "type": "postgresql",
+          "isActive": true,
+          "schema": {
+            "tables": {
+              "attendance": {
+                "columns": {
+                  "attendance_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('attendance_attendance_id_seq'::regclass)"
+                  },
+                  "employee_id": {
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "date": {
+                    "type": "date",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "status": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  }
+                }
+              },
+              "departments": {
+                "columns": {
+                  "department_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('departments_department_id_seq'::regclass)"
+                  },
+                  "department_name": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "employees": {
+                "columns": {
+                  "employee_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('employees_employee_id_seq'::regclass)"
+                  },
+                  "first_name": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "last_name": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "email": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "phone": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "hire_date": {
+                    "type": "date",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "department_id": {
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "job_title_id": {
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "salary": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  }
+                }
+              },
+              "job_titles": {
+                "columns": {
+                  "job_title_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('job_titles_job_title_id_seq'::regclass)"
+                  },
+                  "title_name": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "payroll": {
+                "columns": {
+                  "payroll_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payroll_payroll_id_seq'::regclass)"
+                  },
+                  "employee_id": {
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "pay_date": {
+                    "type": "date",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "basic_salary": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "bonus": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "deductions": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "net_pay": {
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null
+                  }
+                }
+              }
+            },
+            "extractedAt": "2025-08-18T07:16:45.591Z",
+            "totalTables": 5,
+            "rawTables": [
+              {
+                "name": "attendance",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "attendance_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('attendance_attendance_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "employee_id",
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "date",
+                    "type": "date",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "status",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 20,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "departments",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "department_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('departments_department_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "department_name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "employees",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "employee_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('employees_employee_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "first_name",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "last_name",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "email",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "phone",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 20,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "hire_date",
+                    "type": "date",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "department_id",
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "job_title_id",
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "salary",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  }
+                ]
+              },
+              {
+                "name": "job_titles",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "job_title_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('job_titles_job_title_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "title_name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "payroll",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "payroll_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payroll_payroll_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "employee_id",
+                    "type": "integer",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "pay_date",
+                    "type": "date",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "basic_salary",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  },
+                  {
+                    "name": "bonus",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  },
+                  {
+                    "name": "deductions",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  },
+                  {
+                    "name": "net_pay",
+                    "type": "numeric",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 10,
+                    "scale": 2
+                  }
+                ]
+              }
+            ]
+          },
+          "lastConnected": "2025-08-18T07:16:45.591Z"
         }
       }
     }

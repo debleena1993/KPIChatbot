@@ -254,7 +254,7 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
         {showSidebar && (
           <aside className="w-80 bg-white border-r border-gray-200 overflow-y-auto flex-shrink-0">
             {/* Schema Panel */}
-            <div className="p-4 border-b border-gray-200">
+            <div className="p-4 border-b border-gray-200 " style={{display:'none'}}>
               <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
                 <Database className="mr-2 h-4 w-4 text-blue-600" />
                 Database Schema
@@ -280,7 +280,7 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
             </div>
 
             {/* KPI Panel */}
-            <div className="p-4">
+            <div className="p-4" style={{height:'90vh',overflow:'auto'}}>
               <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
                 <BarChart3 className="mr-2 h-4 w-4 text-blue-600" />
                 Suggested KPIs
@@ -304,7 +304,8 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
         )}
 
         {/* Main Chat Area */}
-        <main className="flex-1 flex flex-col">
+        <main className="flex-1 flex flex-col" style={{height: '90vh',
+                                                      overflow: 'auto'}}>
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {messages.map((message) => (
@@ -394,7 +395,7 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
                   </div>
 
                   {/* Quick Actions */}
-                  <div className="flex items-center space-x-2 mt-2">
+                  <div className="flex items-center space-x-2 mt-2" style={{display:'none'}}>
                     <span className="text-xs text-gray-500">Quick actions:</span>
                     <Button
                       variant="outline"
@@ -427,6 +428,7 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
                 </div>
 
                 <Button
+                  style={{display:'none'}}
                   variant="outline"
                   size="sm"
                   data-testid="button-clear-chat"

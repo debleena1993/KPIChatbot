@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { QueryResult } from "@/types";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
-import { Table as TableIcon, BarChart3, Download, Database } from "lucide-react";
+import { Table as TableIcon, BarChart3, Download, Database, ChevronDown, ChevronUp, Copy } from "lucide-react";
 
 interface ResultsDisplayProps {
   results: QueryResult;
@@ -13,6 +13,7 @@ interface ResultsDisplayProps {
 
 export default function ResultsDisplay({ results }: ResultsDisplayProps) {
   const [viewMode, setViewMode] = useState<'table' | 'chart'>('table');
+  const [showFullSQL, setShowFullSQL] = useState(false);
 
   const { table_data, chart_data, columns, row_count, execution_time } = results.results;
 
@@ -52,6 +53,20 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const copySQL = async () => {
+    try {
+      await navigator.clipboard.writeText(results.sql_query);
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = results.sql_query;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    }
   };
 
   const renderChart = () => {
@@ -233,16 +248,56 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
           </div>
         )}
 
-        {/* Query Stats */}
-        <div className="mt-4 flex justify-between items-center text-xs text-gray-500">
-          <div className="flex items-center space-x-4">
-            <Badge variant="secondary" className="text-xs">
-              SQL: {results.sql_query.length > 50 ? results.sql_query.substring(0, 50) + '...' : results.sql_query}
-            </Badge>
+        {/* SQL Query Section */}
+        <div className="mt-4 border-t pt-4">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-2">
+              <Button
+                size="sm"
+                variant="ghost"
+                data-testid="button-toggle-sql"
+                onClick={() => setShowFullSQL(!showFullSQL)}
+                className="h-8 px-2 text-xs text-gray-600 hover:text-gray-900"
+              >
+                <Database className="mr-1 h-3 w-3" />
+                SQL Query
+                {showFullSQL ? (
+                  <ChevronUp className="ml-1 h-3 w-3" />
+                ) : (
+                  <ChevronDown className="ml-1 h-3 w-3" />
+                )}
+              </Button>
+              {!showFullSQL && (
+                <Badge variant="secondary" className="text-xs font-mono">
+                  {results.sql_query.length > 60 ? results.sql_query.substring(0, 60) + '...' : results.sql_query}
+                </Badge>
+              )}
+            </div>
+            <div className="flex items-center space-x-2 text-xs text-gray-500">
+              <span>Query executed in {execution_time}s</span>
+            </div>
           </div>
-          <div>
-            Query executed in {execution_time}s
-          </div>
+          
+          {showFullSQL && (
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-medium text-gray-700">Generated SQL Query</span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  data-testid="button-copy-sql"
+                  onClick={copySQL}
+                  className="h-6 px-2 text-xs"
+                >
+                  <Copy className="mr-1 h-3 w-3" />
+                  Copy
+                </Button>
+              </div>
+              <pre className="text-xs font-mono text-gray-800 whitespace-pre-wrap bg-white p-3 rounded border overflow-x-auto">
+                {results.sql_query}
+              </pre>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

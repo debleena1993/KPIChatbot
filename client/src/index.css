@@ -109,3 +109,6 @@
   .hover\:border-ithr:hover { border-color: var(--ithr); }
   .hover\:bg-orange-50:hover { background-color: hsl(33 100% 97%); }
 }
+body{
+  overflow: hidden
+}

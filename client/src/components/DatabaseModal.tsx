@@ -77,9 +77,9 @@ export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseMo
         
         toast({
           title: "Database connected successfully!",
-          description: `Schema extracted with ${tableCount} tables. AI-generated KPI suggestions ready.`
+          description: ``
         });
-
+        // description: `Schema extracted with ${tableCount} tables. AI-generated KPI suggestions ready.`
         form.reset();
         onSuccess(response.suggested_kpis);
         onClose();
