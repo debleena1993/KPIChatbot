@@ -20,6 +20,7 @@ import {
   Download
 } from "lucide-react";
 import ResultsDisplay from "./ResultsDisplay";
+import pwcLogo from "@assets/PwC_fl_c.png";
 
 interface ChatbotInterfaceProps {
   user: User;
@@ -181,10 +182,10 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
 
   const getSectorColor = (sector: string) => {
     switch (sector) {
-      case 'bank': return 'text-green-600';
-      case 'finance': return 'text-purple-600';
-      case 'ithr': return 'text-orange-600';
-      default: return 'text-blue-600';
+      case 'bank': return 'text-[#FD5108]';
+      case 'finance': return 'text-[#A1A8B3]';
+      case 'ithr': return 'text-[#FE7C39]';
+      default: return 'text-[#FD5108]';
     }
   };
 
@@ -192,15 +193,15 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
     switch (sector) {
       case 'bank': return 'Banking';
       case 'finance': return 'Finance';
-      case 'ithr': return 'IT HR Portal';
+      case 'ithr': return 'HR Portal';
       default: return sector;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-[#F5F7F8] flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex-shrink-0">
+      <header className="bg-white border-b border-[#DFE3E6] px-6 py-4 flex-shrink-0 shadow-sm">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center">
             <Button 
@@ -208,19 +209,23 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
               size="sm"
               data-testid="button-back"
               onClick={onBack}
-              className="mr-4"
+              className="mr-4 text-[#A1A8B3] hover:text-[#1A1A1A] hover:bg-[#FFE8D4]"
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div className="bg-blue-600 text-white w-10 h-10 rounded-lg flex items-center justify-center mr-3">
-              <Bot className="h-5 w-5" />
+            <div className="mr-4">
+              <img 
+                src={pwcLogo} 
+                alt="PWC Logo" 
+                className="h-10 w-auto object-contain"
+              />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">KPI Chatbot</h1>
-              <p className="text-sm text-gray-600">
+              <h1 className="text-xl font-bold text-[#1A1A1A]">PWC KPI Chatbot</h1>
+              <p className="text-sm text-[#A1A8B3]">
                 Connected to database • 
-                <span className="text-green-600 ml-1">
-                  <span className="inline-block w-1 h-1 bg-green-600 rounded-full mr-1"></span>
+                <span className="text-[#FD5108] ml-1">
+                  <span className="inline-block w-1 h-1 bg-[#FD5108] rounded-full mr-1"></span>
                   Online
                 </span>
               </p>
@@ -233,6 +238,7 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
               size="sm"
               data-testid="button-toggle-schema"
               onClick={() => setShowSidebar(!showSidebar)}
+              className="text-[#A1A8B3] hover:text-[#1A1A1A] hover:bg-[#FFE8D4]"
             >
               <Database className="mr-2 h-4 w-4" />
               Schema
@@ -242,6 +248,7 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
               size="sm"
               data-testid="button-logout-chat"
               onClick={onLogout}
+              className="text-[#A1A8B3] hover:text-[#1A1A1A] hover:bg-[#FFE8D4]"
             >
               <LogOut className="h-4 w-4" />
             </Button>
@@ -252,25 +259,25 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
       <div className="flex flex-1 max-w-7xl mx-auto w-full">
         {/* Sidebar */}
         {showSidebar && (
-          <aside className="w-80 bg-white border-r border-gray-200 overflow-y-auto flex-shrink-0">
+          <aside className="w-80 bg-white border-r border-[#DFE3E6] overflow-y-auto flex-shrink-0">
             {/* Schema Panel */}
-            <div className="p-4 border-b border-gray-200 " style={{display:'none'}}>
-              <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
-                <Database className="mr-2 h-4 w-4 text-blue-600" />
+            <div className="p-4 border-b border-[#DFE3E6]" style={{display:'none'}}>
+              <h3 className="font-semibold text-[#1A1A1A] mb-3 flex items-center">
+                <Database className="mr-2 h-4 w-4 text-[#FD5108]" />
                 Database Schema
               </h3>
               
               {schema && (
                 <div className="space-y-2 text-sm">
                   {Object.entries(schema.tables).map(([tableName, tableInfo]) => (
-                    <div key={tableName} className="p-2 bg-gray-50 rounded-lg">
-                      <div className="font-medium text-gray-800 mb-1">{tableName}</div>
-                      <div className="text-xs text-gray-600 ml-2 space-y-1">
+                    <div key={tableName} className="p-2 bg-[#F5F7F8] rounded-lg">
+                      <div className="font-medium text-[#1A1A1A] mb-1">{tableName}</div>
+                      <div className="text-xs text-[#A1A8B3] ml-2 space-y-1">
                         {Object.entries(tableInfo.columns).slice(0, 5).map(([colName, colInfo]) => (
                           <div key={colName}>• {colName} ({colInfo.type})</div>
                         ))}
                         {Object.keys(tableInfo.columns).length > 5 && (
-                          <div className="text-gray-500">... and {Object.keys(tableInfo.columns).length - 5} more</div>
+                          <div className="text-[#CBD1D6]">... and {Object.keys(tableInfo.columns).length - 5} more</div>
                         )}
                       </div>
                     </div>
@@ -281,8 +288,8 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
 
             {/* KPI Panel */}
             <div className="p-4" style={{height:'90vh',overflow:'auto'}}>
-              <h3 className="font-semibold text-gray-900 mb-3 flex items-center">
-                <BarChart3 className="mr-2 h-4 w-4 text-blue-600" />
+              <h3 className="font-semibold text-[#1A1A1A] mb-3 flex items-center">
+                <BarChart3 className="mr-2 h-4 w-4 text-[#FD5108]" />
                 Suggested KPIs
               </h3>
               
@@ -292,10 +299,10 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
                     key={kpi.id}
                     data-testid={`kpi-suggestion-${kpi.id}`}
                     onClick={() => handleQuickQuery(kpi.query_template)}
-                    className="w-full text-left p-3 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors group"
+                    className="w-full text-left p-3 bg-[#F5F7F8] hover:bg-[#FFE8D4] rounded-lg transition-colors group border border-transparent hover:border-[#FD5108]"
                   >
-                    <div className="font-medium text-gray-800 group-hover:text-blue-600">{kpi.name}</div>
-                    <div className="text-xs text-gray-600 mt-1">{kpi.description}</div>
+                    <div className="font-medium text-[#1A1A1A] group-hover:text-[#FD5108]">{kpi.name}</div>
+                    <div className="text-xs text-[#A1A8B3] mt-1">{kpi.description}</div>
                   </button>
                 ))}
               </div>
@@ -317,7 +324,7 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
                 }`}
               >
                 {message.type === "assistant" && (
-                  <div className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="bg-[#FD5108] text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
                     <Bot className="h-4 w-4" />
                   </div>
                 )}
@@ -325,11 +332,11 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
                 <div
                   className={`max-w-3xl ${
                     message.type === "user"
-                      ? "bg-blue-600 text-white p-4 rounded-2xl rounded-tr-none"
-                      : "bg-white p-4 rounded-2xl rounded-tl-none shadow-lg"
+                      ? "bg-[#FD5108] text-white p-4 rounded-2xl rounded-tr-none"
+                      : "bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-[#DFE3E6]"
                   }`}
                 >
-                  <p className={message.type === "user" ? "text-white" : "text-gray-800"}>
+                  <p className={message.type === "user" ? "text-white" : "text-[#1A1A1A]"}>
                     {message.content}
                   </p>
                   
@@ -341,7 +348,7 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
                 </div>
 
                 {message.type === "user" && (
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${getSectorColor(user.sector).replace('text-', 'bg-')} text-white`}>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-[#A1A8B3] text-white">
                     <UserIcon className="h-4 w-4" />
                   </div>
                 )}
@@ -350,13 +357,13 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
 
             {isLoading && (
               <div className="flex items-start space-x-3">
-                <div className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="bg-[#FD5108] text-white w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
                   <Bot className="h-4 w-4" />
                 </div>
-                <div className="bg-white p-4 rounded-2xl rounded-tl-none shadow-lg">
+                <div className="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-[#DFE3E6]">
                   <div className="flex items-center space-x-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                    <span className="text-gray-600">Processing your query...</span>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#FD5108]"></div>
+                    <span className="text-[#A1A8B3]">Processing your query...</span>
                   </div>
                 </div>
               </div>
@@ -366,7 +373,7 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
           </div>
 
           {/* Chat Input */}
-          <div className="border-t border-gray-200 bg-white p-4 flex-shrink-0">
+          <div className="border-t border-[#DFE3E6] bg-white p-4 flex-shrink-0">
             <div className="max-w-4xl mx-auto">
               <div className="flex items-end space-x-3">
                 <div className="flex-1">
@@ -376,7 +383,7 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
                       value={inputMessage}
                       onChange={(e) => setInputMessage(e.target.value)}
                       placeholder="Ask me anything about your KPIs... (e.g., 'Show monthly revenue trends' or 'Which department has the highest average salary?')"
-                      className="w-full p-4 pr-12 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none min-h-[60px] max-h-32"
+                      className="w-full p-4 pr-12 border border-[#DFE3E6] rounded-2xl focus:ring-2 focus:ring-[#FD5108] focus:border-transparent resize-none min-h-[60px] max-h-32 text-[#1A1A1A] placeholder:text-[#A1A8B3]"
                       onKeyPress={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {
                           e.preventDefault();
@@ -388,7 +395,7 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
                       data-testid="button-send-message"
                       onClick={handleSendMessage}
                       disabled={!inputMessage.trim() || isLoading}
-                      className="absolute right-3 bottom-3 bg-blue-600 hover:bg-blue-700 text-white w-8 h-8 p-0 rounded-full"
+                      className="absolute right-3 bottom-3 bg-[#FD5108] hover:bg-[#E8490A] text-white w-8 h-8 p-0 rounded-full border-0"
                     >
                       <Send className="h-4 w-4" />
                     </Button>

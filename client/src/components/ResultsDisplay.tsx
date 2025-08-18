@@ -81,7 +81,7 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
       );
     }
 
-    const chartColors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+    const chartColors = ['#FD5108', '#FE7C39', '#FFAA72', '#A1A8B3', '#B5BCC4']; // PWC color palette
 
     switch (chart_data.type) {
       case 'line':
