@@ -190,7 +190,7 @@ export default function Dashboard({
         </div>
 
         {/* Recent Activity */}
-        <Card className="border-[#DFE3E6]">
+        {/* <Card className="border-[#DFE3E6]">
           <CardHeader>
             <CardTitle className="flex items-center text-[#1A1A1A]">
               <Activity className="mr-2 h-5 w-5 text-[#FD5108]" />
@@ -219,7 +219,7 @@ export default function Dashboard({
               </div>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </main>
 
       {/* Database Connection Modal */}

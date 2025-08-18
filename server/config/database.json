@@ -2226,7 +2226,7 @@
       }
     },
     "admin@bank": {
-      "currentConnection": "admin@bank_1755519249059",
+      "currentConnection": "admin@bank_1755537171133",
       "connections": {
         "admin@bank_1755197914363": {
           "host": "ep-billowing-bird-aen4uhk2-pooler.c-2.us-east-2.aws.neon.tech",
@@ -7289,7 +7289,7 @@
           "username": "neondb_owner",
           "password": "npg_q89GySPsovdH",
           "type": "postgresql",
-          "isActive": true,
+          "isActive": false,
           "schema": {
             "tables": {
               "customers": {
@@ -7642,6 +7642,367 @@
             ]
           },
           "lastConnected": "2025-08-18T12:14:09.520Z"
+        },
+        "admin@bank_1755537171133": {
+          "host": "ep-billowing-bird-aen4uhk2-pooler.c-2.us-east-2.aws.neon.tech",
+          "port": 5432,
+          "database": "bank_portal",
+          "username": "neondb_owner",
+          "password": "npg_q89GySPsovdH",
+          "type": "postgresql",
+          "isActive": true,
+          "schema": {
+            "tables": {
+              "customers": {
+                "columns": {
+                  "customer_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('customers_customer_id_seq'::regclass)"
+                  },
+                  "name": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "email": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "city": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  },
+                  "phone": {
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null
+                  }
+                }
+              },
+              "loan_status": {
+                "columns": {
+                  "status_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loan_status_status_id_seq'::regclass)"
+                  },
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "status": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "loans": {
+                "columns": {
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loans_loan_id_seq'::regclass)"
+                  },
+                  "customer_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "loan_type": {
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "loan_amount": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "interest_rate": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "start_date": {
+                    "type": "date",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              },
+              "payments": {
+                "columns": {
+                  "payment_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payments_payment_id_seq'::regclass)"
+                  },
+                  "loan_id": {
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "amount_paid": {
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null
+                  },
+                  "payment_date": {
+                    "type": "date",
+                    "nullable": false,
+                    "default": null
+                  }
+                }
+              }
+            },
+            "extractedAt": "2025-08-18T17:12:52.111Z",
+            "totalTables": 5,
+            "rawTables": [
+              {
+                "name": "customers",
+                "schema": "bank_portal",
+                "columns": [
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('bank_portal.customers_customer_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "email",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 150,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "city",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "phone",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 15,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "customers",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('customers_customer_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "name",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 100,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "email",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 150,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "city",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "phone",
+                    "type": "character varying",
+                    "nullable": true,
+                    "default": null,
+                    "maxLength": 15,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "loan_status",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "status_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loan_status_status_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "status",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 20,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "loans",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('loans_loan_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "customer_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_type",
+                    "type": "character varying",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": 50,
+                    "precision": null,
+                    "scale": null
+                  },
+                  {
+                    "name": "loan_amount",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 12,
+                    "scale": 2
+                  },
+                  {
+                    "name": "interest_rate",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 5,
+                    "scale": 2
+                  },
+                  {
+                    "name": "start_date",
+                    "type": "date",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              },
+              {
+                "name": "payments",
+                "schema": "public",
+                "columns": [
+                  {
+                    "name": "payment_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": "nextval('payments_payment_id_seq'::regclass)",
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "loan_id",
+                    "type": "integer",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 32,
+                    "scale": 0
+                  },
+                  {
+                    "name": "amount_paid",
+                    "type": "numeric",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": 12,
+                    "scale": 2
+                  },
+                  {
+                    "name": "payment_date",
+                    "type": "date",
+                    "nullable": false,
+                    "default": null,
+                    "maxLength": null,
+                    "precision": null,
+                    "scale": null
+                  }
+                ]
+              }
+            ]
+          },
+          "lastConnected": "2025-08-18T17:12:52.111Z"
         }
       }
     },

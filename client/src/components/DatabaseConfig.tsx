@@ -40,7 +40,7 @@ export default function DatabaseConfig() {
 
   // Get current user from localStorage to make query user-specific
   const getCurrentUser = () => {
-    const storedUser = localStorage.getItem('authUser');
+    const storedUser = localStorage.getItem("authUser");
     return storedUser ? JSON.parse(storedUser) : null;
   };
 
@@ -88,7 +88,9 @@ export default function DatabaseConfig() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/database-config", currentUser?.username] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/database-config", currentUser?.username],
+      });
       toast({
         title: "Database switched",
         description: "Active database connection updated successfully",
@@ -123,7 +125,9 @@ export default function DatabaseConfig() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/database-config", currentUser?.username] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/database-config", currentUser?.username],
+      });
       toast({
         title: "Connection removed",
         description: "Database connection removed successfully",
@@ -164,7 +168,7 @@ export default function DatabaseConfig() {
         <CardHeader>
           <CardTitle className="flex items-center">
             <Database className="mr-2 h-5 w-5" />
-            Database Configurations
+            Database Activity Logs
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -182,7 +186,7 @@ export default function DatabaseConfig() {
         <CardHeader>
           <CardTitle className="flex items-center">
             <Database className="mr-2 h-5 w-5" />
-            Database Configurations
+            Database Activity Logs
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -200,7 +204,7 @@ export default function DatabaseConfig() {
         <CardHeader>
           <CardTitle className="flex items-center">
             <Database className="mr-2 h-5 w-5" />
-            Database Configurations
+            Database Activity Logs
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">

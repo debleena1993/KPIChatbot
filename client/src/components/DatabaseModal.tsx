@@ -5,7 +5,12 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { databaseAPI } from "@/lib/api";
 import { DatabaseConnection, KPISuggestion } from "@/types";
@@ -16,7 +21,7 @@ const databaseSchema = z.object({
   port: z.number().min(1, "Port must be a valid number").max(65535),
   database: z.string().min(1, "Database name is required"),
   username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required")
+  password: z.string().min(1, "Password is required"),
 });
 
 interface DatabaseModalProps {
@@ -25,7 +30,11 @@ interface DatabaseModalProps {
   onSuccess: (kpiSuggestions?: KPISuggestion[]) => void;
 }
 
-export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseModalProps) {
+export default function DatabaseModal({
+  isOpen,
+  onClose,
+  onSuccess,
+}: DatabaseModalProps) {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const { toast } = useToast();
@@ -37,8 +46,8 @@ export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseMo
       port: 5432,
       database: "",
       username: "",
-      password: ""
-    }
+      password: "",
+    },
   });
 
   const handleTestConnection = async () => {
@@ -53,13 +62,16 @@ export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseMo
       // In production, you might want a separate test endpoint
       toast({
         title: "Connection test successful!",
-        description: "Database connection parameters are valid"
+        description: "Database connection parameters are valid",
       });
     } catch (error) {
       toast({
         title: "Connection test failed",
-        description: error instanceof Error ? error.message : "Could not connect to database",
-        variant: "destructive"
+        description:
+          error instanceof Error
+            ? error.message
+            : "Could not connect to database",
+        variant: "destructive",
       });
     } finally {
       setIsTesting(false);
@@ -71,13 +83,15 @@ export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseMo
 
     try {
       const response = await databaseAPI.connect(data);
-      
+
       if (response.status === "connected") {
-        const tableCount = response.schema?.totalTables || Object.keys(response.schema?.tables || {}).length;
-        
+        const tableCount =
+          response.schema?.totalTables ||
+          Object.keys(response.schema?.tables || {}).length;
+
         toast({
           title: "Database connected successfully!",
-          description: ``
+          description: ``,
         });
         // description: `Schema extracted with ${tableCount} tables. AI-generated KPI suggestions ready.`
         form.reset();
@@ -89,8 +103,11 @@ export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseMo
     } catch (error) {
       toast({
         title: "Connection failed",
-        description: error instanceof Error ? error.message : "Could not connect to database",
-        variant: "destructive"
+        description:
+          error instanceof Error
+            ? error.message
+            : "Could not connect to database",
+        variant: "destructive",
       });
     } finally {
       setIsConnecting(false);
@@ -119,7 +136,9 @@ export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseMo
                 className="h-10"
               />
               {form.formState.errors.host && (
-                <p className="text-sm text-red-600">{form.formState.errors.host.message}</p>
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.host.message}
+                </p>
               )}
             </div>
 
@@ -134,7 +153,9 @@ export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseMo
                 className="h-10"
               />
               {form.formState.errors.port && (
-                <p className="text-sm text-red-600">{form.formState.errors.port.message}</p>
+                <p className="text-sm text-red-600">
+                  {form.formState.errors.port.message}
+                </p>
               )}
             </div>
           </div>
@@ -149,7 +170,9 @@ export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseMo
               className="h-10"
             />
             {form.formState.errors.database && (
-              <p className="text-sm text-red-600">{form.formState.errors.database.message}</p>
+              <p className="text-sm text-red-600">
+                {form.formState.errors.database.message}
+              </p>
             )}
           </div>
 
@@ -163,7 +186,9 @@ export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseMo
               className="h-10"
             />
             {form.formState.errors.username && (
-              <p className="text-sm text-red-600">{form.formState.errors.username.message}</p>
+              <p className="text-sm text-red-600">
+                {form.formState.errors.username.message}
+              </p>
             )}
           </div>
 
@@ -178,12 +203,14 @@ export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseMo
               className="h-10"
             />
             {form.formState.errors.password && (
-              <p className="text-sm text-red-600">{form.formState.errors.password.message}</p>
+              <p className="text-sm text-red-600">
+                {form.formState.errors.password.message}
+              </p>
             )}
           </div>
 
           <div className="flex space-x-3">
-            <Button 
+            {/* <Button 
               type="button"
               data-testid="button-test-connection"
               variant="outline"
@@ -193,12 +220,12 @@ export default function DatabaseModal({ isOpen, onClose, onSuccess }: DatabaseMo
             >
               <Zap className="mr-2 h-4 w-4" />
               {isTesting ? "Testing..." : "Test Connection"}
-            </Button>
+            </Button> */}
 
-            <Button 
+            <Button
               type="submit"
               data-testid="button-connect"
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
+              className="flex-1 text-white hover:text-gray-200"
               disabled={isConnecting}
             >
               <Database className="mr-2 h-4 w-4" />
