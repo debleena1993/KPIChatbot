@@ -2345,7 +2345,7 @@
                 }
               }
             },
-            "extractedAt": "2025-08-18T18:16:13.290Z",
+            "extractedAt": "2025-08-18T19:25:10.819Z",
             "totalTables": 5,
             "rawTables": [
               {
@@ -2587,9 +2587,9 @@
               }
             ]
           },
-          "lastConnected": "2025-08-18T18:16:13.290Z"
+          "lastConnected": "2025-08-18T19:25:10.819Z"
         },
-        "admin@bank_1755540587329": {
+        "admin@bank_1755543195198": {
           "host": "ep-orange-haze-ae9mvpy7-pooler.c-2.us-east-2.aws.neon.tech",
           "port": 5432,
           "database": "hr_portal",
@@ -2740,7 +2740,7 @@
                 }
               }
             },
-            "extractedAt": "2025-08-18T18:15:33.241Z",
+            "extractedAt": "2025-08-18T19:24:12.761Z",
             "totalTables": 5,
             "rawTables": [
               {
@@ -2991,7 +2991,7 @@
               }
             ]
           },
-          "lastConnected": "2025-08-18T18:15:33.241Z"
+          "lastConnected": "2025-08-18T19:24:12.761Z"
         }
       }
     },

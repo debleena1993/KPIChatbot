@@ -112,7 +112,7 @@ export default function ChatbotInterface({ user, onBack, onLogout, suggestedKPIs
       });
     });
 
-    setSuggestedKPIs(suggestions.slice(0, 8));
+    setSuggestedKPIs(suggestions.slice(0, 5));
   };
 
   const addWelcomeMessage = () => {

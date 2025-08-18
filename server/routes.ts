@@ -129,18 +129,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       if (result.success) {
-        // Store in session for backward compatibility
+        // Clear any previous session data to ensure fresh schema
         const sessionKey = user.username;
+        if (sessions[sessionKey]) {
+          console.log(`Clearing previous session data for user ${user.username}`);
+          delete sessions[sessionKey];
+        }
+        
+        // Store fresh session data
         const actualConnectionName = result.existingConnectionId || connectionName;
         sessions[sessionKey] = {
           db_connection: connectionData,
-          schema: result.schema,
-          connectionName: actualConnectionName
+          schema: result.schema, // This is the fresh schema from the new connection
+          connectionName: actualConnectionName,
+          lastUpdated: new Date().toISOString()
         };
         
         console.log(`Session created/updated for user ${user.username} with fresh schema from database ${connectionData.database}`);
+        console.log(`Schema contains ${Object.keys(result.schema.tables || {}).length} tables`);
 
-        // Generate AI-powered KPI suggestions based on schema and sector
+        // Generate AI-powered KPI suggestions based on fresh schema and sector
         const suggestedKPIs = await generateAIKPISuggestions(result.schema, user.sector);
 
         res.json({
@@ -172,7 +180,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(400).json({ message: "No active database connection" });
     }
     
-    res.json({ schema: sessions[sessionKey].schema });
+    const schema = sessions[sessionKey].schema;
+    console.log(`Serving schema for user ${req.user.username}: ${Object.keys(schema.tables || {}).length} tables`);
+    
+    res.json({ 
+      schema: schema,
+      lastUpdated: sessions[sessionKey].lastUpdated,
+      connectionName: sessions[sessionKey].connectionName
+    });
   });
 
   // Query KPI endpoint

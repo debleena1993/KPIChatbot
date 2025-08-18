@@ -300,28 +300,38 @@ export default function DatabaseConfig({ onDatabaseConnected }: DatabaseConfigPr
                 </div>
 
                 <div className="flex items-center gap-2">
+                  {/* Schema View Button - Always available if schema exists */}
                   {connection.schema && (
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleViewSchema(connection)}
                       data-testid={`button-view-schema-${connection.id}`}
+                      title="View database schema"
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
                   )}
 
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleConnectDatabase(connection)}
-                    disabled={connectMutation.isPending}
-                    data-testid={`button-connect-${connection.id}`}
-                    title="Connect to this database"
-                  >
-                    <Plug className="h-4 w-4" />
-                  </Button>
+                  {/* Connect Button - Only show for active connections */}
+                  {connection.isActive && (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => handleConnectDatabase(connection)}
+                      disabled={connectMutation.isPending}
+                      data-testid={`button-connect-${connection.id}`}
+                      title="Reconnect to this database"
+                    >
+                      {connectMutation.isPending ? (
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      ) : (
+                        <Plug className="h-4 w-4" />
+                      )}
+                    </Button>
+                  )}
 
+                  {/* Switch Connection Button - Only show for inactive connections */}
                   {!connection.isActive && (
                     <Button
                       variant="outline"
@@ -329,11 +339,13 @@ export default function DatabaseConfig({ onDatabaseConnected }: DatabaseConfigPr
                       onClick={() => handleSwitchConnection(connection.id)}
                       disabled={switchMutation.isPending}
                       data-testid={`button-switch-${connection.id}`}
+                      title="Switch to this database"
                     >
                       <ToggleRight className="h-4 w-4" />
                     </Button>
                   )}
 
+                  {/* Remove Button - Available for non-default connections */}
                   {connection.id !== "default" && (
                     <Button
                       variant="destructive"
@@ -341,6 +353,7 @@ export default function DatabaseConfig({ onDatabaseConnected }: DatabaseConfigPr
                       onClick={() => handleRemoveConnection(connection.id)}
                       disabled={removeMutation.isPending}
                       data-testid={`button-remove-${connection.id}`}
+                      title="Remove this connection"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

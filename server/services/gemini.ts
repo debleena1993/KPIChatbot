@@ -22,7 +22,7 @@ export async function generateKPISuggestions(
 Given a database schema and business sector, analyze the tables, columns, and relationships to suggest relevant KPIs.
 
 Rules:
-1. Generate 6-8 practical KPI suggestions
+1. Generate exactly 5 practical KPI suggestions
 2. Focus on measurable business metrics relevant to the sector
 3. Consider common patterns like totals, counts, averages, trends, and ratios
 4. Include natural language query templates that users can ask
@@ -69,7 +69,7 @@ Based on this database schema for a ${sector} business, generate relevant KPI su
         suggestion.description && 
         suggestion.query_template &&
         suggestion.category
-      ).slice(0, 8); // Limit to 8 suggestions
+      ).slice(0, 5); // Limit to 5 suggestions
     }
 
     return getFallbackSuggestions(sector);
@@ -102,6 +102,20 @@ function getFallbackSuggestions(sector: string): KPISuggestion[] {
         description: "Total transaction amounts processed",
         query_template: "What is the daily transaction volume?",
         category: "Operational"
+      },
+      {
+        id: "loan_portfolio_value",
+        name: "Loan Portfolio Value",
+        description: "Total value of outstanding loans",
+        query_template: "What is the total value of our loan portfolio?",
+        category: "Financial"
+      },
+      {
+        id: "customer_deposits",
+        name: "Customer Deposits",
+        description: "Total customer deposit amounts",
+        query_template: "Show me total customer deposits by account type",
+        category: "Financial"
       }
     ],
     finance: [
@@ -125,6 +139,20 @@ function getFallbackSuggestions(sector: string): KPISuggestion[] {
         description: "Total value of client portfolios",
         query_template: "Show me client portfolio value distributions",
         category: "Financial"
+      },
+      {
+        id: "investment_performance",
+        name: "Investment Performance",
+        description: "Performance metrics of investment portfolios",
+        query_template: "What is the average return on our investment portfolios?",
+        category: "Performance"
+      },
+      {
+        id: "client_acquisition",
+        name: "Client Acquisition Rate",
+        description: "Rate of new client acquisitions over time",
+        query_template: "How many new clients did we acquire this quarter?",
+        category: "Growth"
       }
     ],
     ithr: [
@@ -148,11 +176,26 @@ function getFallbackSuggestions(sector: string): KPISuggestion[] {
         description: "Employee performance rating distributions",
         query_template: "What are the performance rating trends?",
         category: "Performance"
+      },
+      {
+        id: "employee_headcount",
+        name: "Employee Headcount",
+        description: "Total number of employees by department",
+        query_template: "How many employees do we have in each department?",
+        category: "Workforce"
+      },
+      {
+        id: "average_salary",
+        name: "Average Salary Analysis",
+        description: "Average salary by department and position",
+        query_template: "What is the average salary by department?",
+        category: "Compensation"
       }
     ]
   };
 
-  return fallbackSuggestions[sector] || fallbackSuggestions.finance;
+  const suggestions = fallbackSuggestions[sector] || fallbackSuggestions.finance;
+  return suggestions.slice(0, 5);
 }
 
 export async function generateSQLFromQuery(

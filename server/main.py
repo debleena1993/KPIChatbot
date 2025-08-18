@@ -321,7 +321,7 @@ def generate_kpi_suggestions(schema: dict, sector: str) -> list:
                 "query_template": f"Show me {table_name} trends over time"
             })
     
-    return suggestions[:8]  # Limit to 8 suggestions
+    return suggestions[:5]  # Limit to 5 suggestions
 
 def format_query_results(results: dict, original_query: str) -> dict:
     """Format query results for frontend display"""

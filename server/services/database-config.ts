@@ -311,7 +311,9 @@ export class DatabaseConfigService {
         });
 
         // Update existing connection with fresh schema and activate it
+        console.log(`Extracting fresh schema for existing connection ${existingConnectionId}`);
         const schema = await this.extractSchema(connectionParams);
+        console.log(`Fresh schema extracted with ${Object.keys(schema.tables || {}).length} tables`);
         this.config.users[userId].connections[existingConnectionId] = {
           ...connectionParams,
           type: "postgresql",
@@ -327,7 +329,9 @@ export class DatabaseConfigService {
       }
 
       // Extract schema for new connection
+      console.log(`Extracting fresh schema for new connection ${connectionId}`);
       const schema = await this.extractSchema(connectionParams);
+      console.log(`Fresh schema extracted with ${Object.keys(schema.tables || {}).length} tables`);
 
       // Deactivate current active connection for this user
       Object.keys(this.config.users[userId].connections).forEach((key) => {
