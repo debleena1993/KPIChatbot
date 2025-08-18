@@ -131,11 +131,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (result.success) {
         // Store in session for backward compatibility
         const sessionKey = user.username;
+        const actualConnectionName = result.existingConnectionId || connectionName;
         sessions[sessionKey] = {
           db_connection: connectionData,
           schema: result.schema,
-          connectionName: connectionName
+          connectionName: actualConnectionName
         };
+        
+        console.log(`Session created/updated for user ${user.username} with fresh schema from database ${connectionData.database}`);
 
         // Generate AI-powered KPI suggestions based on schema and sector
         const suggestedKPIs = await generateAIKPISuggestions(result.schema, user.sector);
@@ -144,8 +147,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           status: "connected",
           schema: result.schema,
           suggested_kpis: suggestedKPIs,
-          connectionName: connectionName,
-          message: "Database connected and schema extracted successfully"
+          connectionName: actualConnectionName,
+          message: result.isExisting 
+            ? "Database connection updated (existing connection reused to avoid duplicates)"
+            : "Database connected and schema extracted successfully"
         });
       } else {
         res.status(400).json({ 
@@ -244,6 +249,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (success) {
         const currentConnection = dbService.getCurrentConnection(user.username);
+        
+        // Update session data with the new connection's schema
+        const sessionKey = user.username;
+        if (currentConnection && currentConnection.schema) {
+          sessions[sessionKey] = {
+            db_connection: {
+              host: currentConnection.host,
+              port: currentConnection.port,
+              database: currentConnection.database,
+              username: currentConnection.username,
+              password: currentConnection.password
+            },
+            schema: currentConnection.schema,
+            connectionName: connectionId
+          };
+          
+          console.log(`Session updated for user ${user.username} with schema from database ${currentConnection.database}`);
+        }
+        
         res.json({
           success: true,
           message: "Database connection switched successfully",

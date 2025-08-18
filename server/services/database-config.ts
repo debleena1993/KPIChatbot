@@ -247,6 +247,28 @@ export class DatabaseConfigService {
     }
   }
 
+  private findExistingConnection(userId: string, connectionParams: {
+    host: string;
+    port: number;
+    database: string;
+    username: string;
+  }): string | null {
+    if (!this.config.users[userId]?.connections) return null;
+
+    // Look for existing connection with same host, port, database, and username
+    for (const [connectionId, connection] of Object.entries(this.config.users[userId].connections)) {
+      if (
+        connection.host === connectionParams.host &&
+        connection.port === connectionParams.port &&
+        connection.database === connectionParams.database &&
+        connection.username === connectionParams.username
+      ) {
+        return connectionId;
+      }
+    }
+    return null;
+  }
+
   async addConnection(
     userId: string,
     connectionId: string,
@@ -257,7 +279,7 @@ export class DatabaseConfigService {
       username: string;
       password: string;
     },
-  ): Promise<{ success: boolean; schema?: any; error?: string }> {
+  ): Promise<{ success: boolean; schema?: any; error?: string; isExisting?: boolean; existingConnectionId?: string }> {
     try {
       // Test the connection first
       const isValid = await this.testConnection(connectionParams);
@@ -268,9 +290,6 @@ export class DatabaseConfigService {
         };
       }
 
-      // Extract schema
-      const schema = await this.extractSchema(connectionParams);
-
       // Initialize user config if it doesn't exist
       if (!this.config.users[userId]) {
         this.config.users[userId] = {
@@ -278,6 +297,37 @@ export class DatabaseConfigService {
           connections: {}
         };
       }
+
+      // Check for existing connection with same database parameters
+      const existingConnectionId = this.findExistingConnection(userId, connectionParams);
+      
+      if (existingConnectionId) {
+        // Update existing connection instead of creating duplicate
+        console.log(`Found existing connection for ${connectionParams.database} on ${connectionParams.host}, updating it instead of creating duplicate`);
+        
+        // Deactivate all connections for this user
+        Object.keys(this.config.users[userId].connections).forEach((key) => {
+          this.config.users[userId].connections[key].isActive = false;
+        });
+
+        // Update existing connection with fresh schema and activate it
+        const schema = await this.extractSchema(connectionParams);
+        this.config.users[userId].connections[existingConnectionId] = {
+          ...connectionParams,
+          type: "postgresql",
+          isActive: true,
+          schema: schema,
+          lastConnected: new Date().toISOString(),
+        };
+
+        this.config.users[userId].currentConnection = existingConnectionId;
+        this.saveConfig();
+
+        return { success: true, schema, isExisting: true, existingConnectionId };
+      }
+
+      // Extract schema for new connection
+      const schema = await this.extractSchema(connectionParams);
 
       // Deactivate current active connection for this user
       Object.keys(this.config.users[userId].connections).forEach((key) => {
@@ -318,7 +368,56 @@ export class DatabaseConfigService {
   }
 
   getAllConnections(userId: string): Record<string, DatabaseConnection> {
+    if (!this.config.users[userId]?.connections) return {};
+    
+    // Clean up duplicates before returning connections
+    this.cleanupDuplicateConnections(userId);
     return this.config.users[userId]?.connections || {};
+  }
+
+  private cleanupDuplicateConnections(userId: string): void {
+    if (!this.config.users[userId]?.connections) return;
+
+    const connections = this.config.users[userId].connections;
+    const seen = new Set<string>();
+    const toRemove: string[] = [];
+
+    // Build unique identifier for each connection and track duplicates
+    for (const [connectionId, connection] of Object.entries(connections)) {
+      const identifier = `${connection.host}:${connection.port}:${connection.database}:${connection.username}`;
+      
+      if (seen.has(identifier)) {
+        // This is a duplicate - mark for removal (keep the first occurrence)
+        toRemove.push(connectionId);
+        console.log(`Found duplicate connection: ${connectionId} for database ${connection.database}`);
+      } else {
+        seen.add(identifier);
+      }
+    }
+
+    // Remove duplicates
+    let hasChanges = false;
+    for (const connectionId of toRemove) {
+      delete this.config.users[userId].connections[connectionId];
+      hasChanges = true;
+      
+      // If this was the current connection, find a replacement
+      if (this.config.users[userId].currentConnection === connectionId) {
+        const remainingConnections = Object.keys(this.config.users[userId].connections);
+        if (remainingConnections.length > 0) {
+          this.config.users[userId].currentConnection = remainingConnections[0];
+          this.config.users[userId].connections[remainingConnections[0]].isActive = true;
+        } else {
+          this.config.users[userId].currentConnection = null;
+        }
+      }
+    }
+
+    // Save config if we made changes
+    if (hasChanges) {
+      this.saveConfig();
+      console.log(`Cleaned up ${toRemove.length} duplicate connection(s) for user ${userId}`);
+    }
   }
 
   setActiveConnection(userId: string, connectionId: string): boolean {

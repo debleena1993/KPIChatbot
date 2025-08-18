@@ -186,7 +186,7 @@ export default function Dashboard({
 
         {/* Database Configuration */}
         <div className="mb-6">
-          <DatabaseConfig />
+          <DatabaseConfig onDatabaseConnected={onDatabaseConnected} />
         </div>
 
         {/* Recent Activity */}

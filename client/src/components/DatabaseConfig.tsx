@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
-import { Database, Eye, Trash2, ToggleRight, Table } from "lucide-react";
-import { authenticatedRequest } from "@/lib/api";
+import { Database, Eye, Trash2, ToggleRight, Table, Plug } from "lucide-react";
+import { authenticatedRequest, databaseAPI } from "@/lib/api";
 
 interface DatabaseConnection {
   id: string;
@@ -20,6 +20,7 @@ interface DatabaseConnection {
   port: number;
   database: string;
   username: string;
+  password?: string;
   type: string;
   isActive: boolean;
   schema?: any;
@@ -32,7 +33,11 @@ interface DatabaseConfigResponse {
   connections: DatabaseConnection[];
 }
 
-export default function DatabaseConfig() {
+interface DatabaseConfigProps {
+  onDatabaseConnected?: (kpiSuggestions?: any[]) => void;
+}
+
+export default function DatabaseConfig({ onDatabaseConnected }: DatabaseConfigProps) {
   const [isSchemaDialogOpen, setIsSchemaDialogOpen] = useState(false);
   const [selectedSchema, setSelectedSchema] = useState<any>(null);
   const { toast } = useToast();
@@ -142,6 +147,49 @@ export default function DatabaseConfig() {
     },
   });
 
+  const connectMutation = useMutation({
+    mutationFn: async (connection: DatabaseConnection) => {
+      // For reconnection, we'll prompt the user for password since we don't store it
+      const password = prompt(`Enter password for ${connection.username}@${connection.host}/${connection.database}:`);
+      if (!password) {
+        throw new Error("Password is required for connection");
+      }
+      
+      const response = await databaseAPI.connect({
+        host: connection.host,
+        port: connection.port,
+        database: connection.database,
+        username: connection.username,
+        password: password,
+      });
+      return response;
+    },
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({
+        queryKey: ["/api/database-config", currentUser?.username],
+      });
+      
+      toast({
+        title: "Database reconnected successfully! 🎉",
+        description: "Redirecting to KPI chatbot with suggested queries...",
+      });
+      
+      // Navigate to chatbot page with KPI suggestions
+      if (onDatabaseConnected) {
+        setTimeout(() => {
+          onDatabaseConnected(response.suggested_kpis);
+        }, 1000); // Small delay to show the success toast
+      }
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Reconnection failed",
+        description: error.message || "Could not reconnect to database",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleViewSchema = (connection: DatabaseConnection) => {
     setSelectedSchema(connection.schema);
     setIsSchemaDialogOpen(true);
@@ -155,6 +203,10 @@ export default function DatabaseConfig() {
     if (confirm("Are you sure you want to remove this database connection?")) {
       removeMutation.mutate(connectionId);
     }
+  };
+
+  const handleConnectDatabase = (connection: DatabaseConnection) => {
+    connectMutation.mutate(connection);
   };
 
   const formatDate = (dateString: string | null) => {
@@ -258,6 +310,17 @@ export default function DatabaseConfig() {
                       <Eye className="h-4 w-4" />
                     </Button>
                   )}
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleConnectDatabase(connection)}
+                    disabled={connectMutation.isPending}
+                    data-testid={`button-connect-${connection.id}`}
+                    title="Connect to this database"
+                  >
+                    <Plug className="h-4 w-4" />
+                  </Button>
 
                   {!connection.isActive && (
                     <Button
