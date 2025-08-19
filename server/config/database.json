@@ -2345,7 +2345,7 @@
                 }
               }
             },
-            "extractedAt": "2025-08-19T06:34:35.542Z",
+            "extractedAt": "2025-08-19T10:34:16.925Z",
             "totalTables": 5,
             "rawTables": [
               {
@@ -2587,7 +2587,7 @@
               }
             ]
           },
-          "lastConnected": "2025-08-19T06:34:35.542Z"
+          "lastConnected": "2025-08-19T10:34:16.925Z"
         }
       }
     },
@@ -2745,7 +2745,7 @@
                 }
               }
             },
-            "extractedAt": "2025-08-18T19:44:48.671Z",
+            "extractedAt": "2025-08-19T10:41:57.681Z",
             "totalTables": 5,
             "rawTables": [
               {
@@ -2996,7 +2996,7 @@
               }
             ]
           },
-          "lastConnected": "2025-08-18T19:44:48.672Z"
+          "lastConnected": "2025-08-19T10:41:57.681Z"
         }
       }
     }

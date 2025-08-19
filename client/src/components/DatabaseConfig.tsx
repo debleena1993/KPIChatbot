@@ -13,8 +13,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { Database, Eye, Trash2, ToggleRight, Table, Plug } from "lucide-react";
 import { authenticatedRequest, databaseAPI } from "@/lib/api";
+import DatabaseReconnectModal from "./DatabaseReconnectModal";
 
-interface DatabaseConnection {
+interface DatabaseConnectionLocal {
   id: string;
   host: string;
   port: number;
@@ -29,8 +30,8 @@ interface DatabaseConnection {
 
 interface DatabaseConfigResponse {
   success: boolean;
-  currentConnection: DatabaseConnection | null;
-  connections: DatabaseConnection[];
+  currentConnection: DatabaseConnectionLocal | null;
+  connections: DatabaseConnectionLocal[];
 }
 
 interface DatabaseConfigProps {
@@ -40,6 +41,8 @@ interface DatabaseConfigProps {
 export default function DatabaseConfig({ onDatabaseConnected }: DatabaseConfigProps) {
   const [isSchemaDialogOpen, setIsSchemaDialogOpen] = useState(false);
   const [selectedSchema, setSelectedSchema] = useState<any>(null);
+  const [isReconnectModalOpen, setIsReconnectModalOpen] = useState(false);
+  const [selectedConnection, setSelectedConnection] = useState<DatabaseConnectionLocal | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -148,13 +151,7 @@ export default function DatabaseConfig({ onDatabaseConnected }: DatabaseConfigPr
   });
 
   const connectMutation = useMutation({
-    mutationFn: async (connection: DatabaseConnection) => {
-      // For reconnection, we'll prompt the user for password since we don't store it
-      const password = prompt(`Enter password for ${connection.username}@${connection.host}/${connection.database}:`);
-      if (!password) {
-        throw new Error("Password is required for connection");
-      }
-      
+    mutationFn: async ({ connection, password }: { connection: DatabaseConnectionLocal; password: string }) => {
       const response = await databaseAPI.connect({
         host: connection.host,
         port: connection.port,
@@ -169,8 +166,11 @@ export default function DatabaseConfig({ onDatabaseConnected }: DatabaseConfigPr
         queryKey: ["/api/database-config", currentUser?.username],
       });
       
+      setIsReconnectModalOpen(false);
+      setSelectedConnection(null);
+      
       toast({
-        title: "Database reconnected successfully! 🎉",
+        title: "Database reconnected successfully!",
         description: "Redirecting to KPI chatbot with suggested queries...",
       });
       
@@ -190,7 +190,7 @@ export default function DatabaseConfig({ onDatabaseConnected }: DatabaseConfigPr
     },
   });
 
-  const handleViewSchema = (connection: DatabaseConnection) => {
+  const handleViewSchema = (connection: DatabaseConnectionLocal) => {
     setSelectedSchema(connection.schema);
     setIsSchemaDialogOpen(true);
   };
@@ -205,8 +205,20 @@ export default function DatabaseConfig({ onDatabaseConnected }: DatabaseConfigPr
     }
   };
 
-  const handleConnectDatabase = (connection: DatabaseConnection) => {
-    connectMutation.mutate(connection);
+  const handleConnectDatabase = (connection: DatabaseConnectionLocal) => {
+    setSelectedConnection(connection);
+    setIsReconnectModalOpen(true);
+  };
+
+  const handleReconnect = (password: string) => {
+    if (selectedConnection) {
+      connectMutation.mutate({ connection: selectedConnection, password });
+    }
+  };
+
+  const handleCloseReconnectModal = () => {
+    setIsReconnectModalOpen(false);
+    setSelectedConnection(null);
   };
 
   const formatDate = (dateString: string | null) => {
@@ -438,6 +450,15 @@ export default function DatabaseConfig({ onDatabaseConnected }: DatabaseConfigPr
           </ScrollArea>
         </DialogContent>
       </Dialog>
+
+      {/* Database Reconnect Modal */}
+      <DatabaseReconnectModal
+        isOpen={isReconnectModalOpen}
+        onClose={handleCloseReconnectModal}
+        onReconnect={handleReconnect}
+        connection={selectedConnection}
+        isLoading={connectMutation.isPending}
+      />
     </>
   );
 }

@@ -15,6 +15,7 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
   const [viewMode, setViewMode] = useState<'table' | 'chart'>('table');
   const [showFullSQL, setShowFullSQL] = useState(false);
   const [showInsights, setShowInsights] = useState(false);
+  const [copyButtonText, setCopyButtonText] = useState('Copy');
 
   const { table_data, chart_data, columns, row_count, execution_time } = results.results;
   const isLangGraphEnhanced = (results as any).langgraph_enhanced || false;
@@ -83,6 +84,8 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
   const copySQL = async () => {
     try {
       await navigator.clipboard.writeText(results.sql_query);
+      setCopyButtonText('Copied');
+      setTimeout(() => setCopyButtonText('Copy'), 2000);
     } catch (err) {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
@@ -91,6 +94,8 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
+      setCopyButtonText('Copied');
+      setTimeout(() => setCopyButtonText('Copy'), 2000);
     }
   };
 
@@ -356,11 +361,7 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
                   <ChevronDown className="ml-1 h-3 w-3" />
                 )}
               </Button>
-              {!showFullSQL && (
-                <Badge variant="secondary" className="text-xs font-mono">
-                  {results.sql_query.length > 60 ? results.sql_query.substring(0, 60) + '...' : results.sql_query}
-                </Badge>
-              )}
+
             </div>
             <div className="flex items-center space-x-2 text-xs text-gray-500">
               <span>Query executed in {execution_time}s</span>
@@ -379,7 +380,7 @@ export default function ResultsDisplay({ results }: ResultsDisplayProps) {
                   className="h-6 px-2 text-xs"
                 >
                   <Copy className="mr-1 h-3 w-3" />
-                  Copy
+                  {copyButtonText}
                 </Button>
               </div>
               <pre className="text-xs font-mono text-gray-800 whitespace-pre-wrap bg-white p-3 rounded border overflow-x-auto">
