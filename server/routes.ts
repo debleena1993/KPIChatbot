@@ -7,10 +7,7 @@ import { z } from "zod";
 import { DatabaseConfigService } from "./services/database-config";
 import { generateKPISuggestions as generateAIKPISuggestions, generateSQLFromQuery } from "./services/gemini";
 import { QueryExecutor } from "./services/query-executor";
-import { exec } from "child_process";
-import { promisify } from "util";
 
-const execAsync = promisify(exec);
 
 // Extend Request interface to include user property
 declare global {
@@ -212,73 +209,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const queryExecutor = QueryExecutor.getInstance();
       const results = await queryExecutor.executeQuery(sqlQuery, user.username);
 
-      // Get intelligent chart recommendations using LangGraph
-      let intelligentChartConfig = null;
-      try {
-        // Clean data for Python processing (handle null values)
-        const cleanedData = results.table_data.map(row => {
-          const cleanedRow: any = {};
-          for (const [key, value] of Object.entries(row)) {
-            // Convert null to 0 only for chart processing, preserve meaningful nulls
-            cleanedRow[key] = value === null ? 0 : value;
-          }
-          return cleanedRow;
-        });
-
-        const pythonScript = `
-import sys
-import os
-sys.path.append('/home/runner/workspace/server/services')
-sys.path.append('/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages')
-from langgraph_chart_agent import get_intelligent_chart_recommendation
-import json
-
-data = ${JSON.stringify(cleanedData)}
-columns = ${JSON.stringify(results.columns)}
-query_context = "${query.replace(/"/g, '\\"')}"
-
-result = get_intelligent_chart_recommendation(data, columns, query_context)
-print(json.dumps(result))
-        `;
-        
-        const { stdout } = await execAsync(`cd ${process.cwd()} && PYTHONPATH=/home/runner/workspace/server/services:/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages python3 -c "${pythonScript.replace(/"/g, '\\"')}"`, {
-          env: { 
-            ...process.env, 
-            PYTHONPATH: '/home/runner/workspace/server/services:/home/runner/workspace/.pythonlibs/lib/python3.11/site-packages',
-            GOOGLE_API_KEY: process.env.GOOGLE_API_KEY 
-          }
-        });
-        
-        intelligentChartConfig = JSON.parse(stdout.trim());
-      } catch (error) {
-        console.log("LangGraph chart intelligence unavailable, using fallback:", error instanceof Error ? error.message : String(error));
-        intelligentChartConfig = {
-          chart_type: results.chart_data?.type || "bar",
-          x_axis: results.chart_data?.xAxis || results.columns[0],
-          y_axis: results.chart_data?.yAxis || results.columns[1],
-          enhanced_by_langgraph: false,
-          fallback_reason: "LangGraph agent unavailable"
-        };
-      }
-
-      // Enhance results with intelligent chart configuration
-      const enhancedResults = {
-        ...results,
-        chart_data: {
-          ...results.chart_data,
-          type: intelligentChartConfig.chart_type,
-          xAxis: intelligentChartConfig.x_axis,
-          yAxis: intelligentChartConfig.y_axis,
-          intelligent_config: intelligentChartConfig
-        }
-      };
-
       res.json({
         query,
         sql_query: sqlQuery,
-        results: enhancedResults,
-        execution_time: results.execution_time,
-        langgraph_enhanced: intelligentChartConfig.enhanced_by_langgraph || false
+        results,
+        execution_time: results.execution_time
       });
     } catch (error) {
       console.error("Query execution error:", error);
